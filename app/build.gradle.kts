@@ -19,7 +19,7 @@ kotlin {
     }
     
     android {
-       namespace = "com.majidbahmani.bluetoothterminal.shared"
+       namespace = "com.majidbahmani.bluetoothterminal.app"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
     
@@ -45,6 +45,14 @@ kotlin {
             implementation(libs.compose.uiTooling)
         }
         commonMain.dependencies {
+            implementation(project(":bluetooth"))
+            implementation(project(":systemdesign"))
+
+            // api: initKoin() exposes Koin types (KoinAppDeclaration) to the platform apps
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.navigation.compose)
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
