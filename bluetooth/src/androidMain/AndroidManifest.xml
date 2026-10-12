@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Merged into every app that uses the library. minSdk 31: no legacy BLUETOOTH / location permissions. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- The app never derives location from scan results. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Installable without BLE; the library reports AdapterState.Unsupported. -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
+</manifest>
