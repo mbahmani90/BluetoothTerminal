@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 
-import bluetoothterminal.shared.generated.resources.Res
-import bluetoothterminal.shared.generated.resources.compose_multiplatform
+import bluetoothterminal.app.generated.resources.Res
+import bluetoothterminal.app.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
