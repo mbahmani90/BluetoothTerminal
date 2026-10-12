@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1010" width="1200" height="1010" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
+    </marker>
+    <marker id="arrowUi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+    <marker id="arrowImpl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ffffff" stroke="#7c3aed" stroke-width="1.2"/>
+    </marker>
+    <marker id="arrowOs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/>
+    </marker>
+    <style>
+      .shell { fill: #f9fafb; stroke: #374151; stroke-width: 1.5; }
+      .root { fill: #eef2ff; stroke: #4f46e5; stroke-width: 1.8; }
+      .feature { fill: #ffffff; stroke: #2563eb; stroke-width: 1.6; }
+      .lib { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.8; }
+      .src { fill: #ffffff; stroke: #7c3aed; stroke-width: 1.3; }
+      .later { fill: #ffffff; stroke: #9ca3af; stroke-width: 1.2; stroke-dasharray: 5 3; }
+      .ds { fill: #fdf2f8; stroke: #db2777; stroke-width: 1.6; }
+      .os { fill: #ecfdf5; stroke: #0d9488; stroke-width: 1.4; }
+      .device { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.5; }
+      .note { fill: #fefce8; stroke: #ca8a04; stroke-width: 1.2; }
+      .legend { fill: #ffffff; stroke: #d1d5db; stroke-width: 1.2; }
+      .h1 { font-size: 20px; font-weight: 700; fill: #111827; }
+      .h1sub { font-size: 12.5px; fill: #6b7280; }
+      .title { font-size: 14.5px; font-weight: 700; fill: #111827; }
+      .tag { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; }
+      .sub { font-size: 11px; fill: #4b5563; font-family: Menlo, Consolas, monospace; }
+      .layerKey { font-size: 11px; fill: #2563eb; font-weight: 700; font-family: Menlo, Consolas, monospace; }
+      .text { font-size: 11.5px; fill: #374151; }
+      .muted { font-size: 11px; fill: #9ca3af; font-style: italic; }
+      .noteTitle { font-size: 12.5px; font-weight: 700; fill: #854d0e; }
+      .dep { stroke: #374151; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+      .ui { stroke: #9ca3af; stroke-width: 1.3; fill: none; stroke-dasharray: 4 3; marker-end: url(#arrowUi); }
+      .impl { stroke: #7c3aed; stroke-width: 1.4; fill: none; stroke-dasharray: 3 3; marker-end: url(#arrowImpl); }
+      .osCall { stroke: #0d9488; stroke-width: 1.4; fill: none; marker-end: url(#arrowOs); }
+      .radio { stroke: #ea580c; stroke-width: 1.4; fill: none; stroke-dasharray: 2 4; }
+      .forbid { stroke: #dc2626; stroke-width: 1.6; fill: none; stroke-dasharray: 6 4; }
+      .lbl { font-size: 10.5px; fill: #374151; }
+      .lblForbid { font-size: 11px; fill: #dc2626; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1010" fill="#ffffff"/>
+
+  <!-- Header -->
+  <text x="40" y="36" class="h1">BluetoothTerminal — multi-module architecture (KMP, BLE first)</text>
+  <text x="40" y="56" class="h1sub">Arrows point to the module that is depended on. Clean Architecture layers live inside each feature module.</text>
+
+  <!-- Row 1: platform shells -->
+  <rect x="250" y="76" width="260" height="62" rx="10" class="shell"/>
+  <text x="266" y="92" class="tag" fill="#374151">PLATFORM SHELL</text>
+  <text x="266" y="111" class="title">androidApp</text>
+  <text x="266" y="128" class="sub">MainActivity · Manifest permissions</text>
+
+  <rect x="690" y="76" width="260" height="62" rx="10" class="shell"/>
+  <text x="706" y="92" class="tag" fill="#374151">PLATFORM SHELL</text>
+  <text x="706" y="111" class="title">iosApp</text>
+  <text x="706" y="128" class="sub">SwiftUI · NSBluetoothAlwaysUsage…</text>
+
+  <path d="M380,138 L470,190" class="dep"/>
+  <path d="M820,138 L730,190" class="dep"/>
+
+  <!-- Row 2: composition root -->
+  <rect x="300" y="190" width="600" height="84" rx="10" class="root"/>
+  <text x="316" y="207" class="tag" fill="#4f46e5">COMPOSITION ROOT</text>
+  <text x="316" y="227" class="title">:app</text>
+  <text x="316" y="246" class="sub">App() · NavHost (Devices → Terminal) · theme wrapper</text>
+  <text x="316" y="263" class="sub">initKoin(all modules) · builds iOS framework "Shared"</text>
+
+  <!-- app → features -->
+  <path d="M470,274 L320,342" class="dep"/>
+  <path d="M730,274 L880,342" class="dep"/>
+  <text x="378" y="300" class="lbl" text-anchor="end">nav entry +</text>
+  <text x="378" y="313" class="lbl" text-anchor="end">callbacks</text>
+  <text x="822" y="300" class="lbl">nav entry +</text>
+  <text x="822" y="313" class="lbl">callbacks</text>
+
+  <!-- app → bluetooth (Koin wiring lives in :app, not in the library) -->
+  <path d="M300,232 H52 V700 H80" class="dep"/>
+  <text x="68" y="560" class="lbl" transform="rotate(-90 68 560)">Koin in :app: single { createBluetoothClient() }</text>
+
+  <!-- app → systemdesign -->
+  <path d="M900,232 H1150 V636 H1122" class="ui"/>
+  <text x="1142" y="420" class="lbl" transform="rotate(90 1142 420)">theme</text>
+
+  <!-- Row 3: features -->
+  <rect x="120" y="342" width="380" height="150" rx="10" class="feature"/>
+  <text x="136" y="359" class="tag" fill="#2563eb">FEATURE</text>
+  <text x="136" y="379" class="title">:feature:devices</text>
+  <text x="136" y="402" class="layerKey">presentation</text>
+  <text x="236" y="402" class="sub">DevicesRoute · DevicesViewModel</text>
+  <text x="136" y="422" class="layerKey">domain</text>
+  <text x="236" y="422" class="sub">ScanDevices · ConnectToDevice</text>
+  <text x="136" y="442" class="layerKey">data</text>
+  <text x="236" y="442" class="sub">DeviceRepositoryImpl</text>
+  <text x="136" y="462" class="layerKey">di</text>
+  <text x="236" y="462" class="sub">devicesModule</text>
+  <text x="136" y="482" class="text">Scan list, adapter/permission states, connect</text>
+
+  <rect x="700" y="342" width="380" height="150" rx="10" class="feature"/>
+  <text x="716" y="359" class="tag" fill="#2563eb">FEATURE</text>
+  <text x="716" y="379" class="title">:feature:terminal</text>
+  <text x="716" y="402" class="layerKey">presentation</text>
+  <text x="816" y="402" class="sub">TerminalRoute · TerminalViewModel</text>
+  <text x="716" y="422" class="layerKey">domain</text>
+  <text x="816" y="422" class="sub">EncodeMessage · ObserveTerminal</text>
+  <text x="716" y="442" class="layerKey">data</text>
+  <text x="816" y="442" class="sub">TerminalRepositoryImpl</text>
+  <text x="716" y="462" class="layerKey">di</text>
+  <text x="816" y="462" class="sub">terminalModule</text>
+  <text x="716" y="482" class="text">Log (RX/TX), text/hex, line ending, send</text>
+
+  <!-- forbidden feature → feature -->
+  <path d="M500,417 H700" class="forbid"/>
+  <circle cx="600" cy="417" r="11" fill="#ffffff" stroke="#dc2626" stroke-width="1.6"/>
+  <path d="M594,411 L606,423 M606,411 L594,423" stroke="#dc2626" stroke-width="2"/>
+  <text x="600" y="446" class="lblForbid" text-anchor="middle">no feature → feature</text>
+
+  <!-- features → bluetooth -->
+  <path d="M310,492 V580" class="dep"/>
+  <path d="M760,492 V580" class="dep"/>
+  <text x="318" y="540" class="lbl">BluetoothSession</text>
+  <text x="680" y="540" class="lbl" text-anchor="end">BluetoothSession</text>
+
+  <!-- features → systemdesign -->
+  <path d="M480,492 V522 H990 V580" class="ui"/>
+  <path d="M1040,492 V580" class="ui"/>
+
+  <!-- Row 4: :bluetooth library -->
+  <rect x="80" y="580" width="760" height="232" rx="12" class="lib"/>
+  <text x="98" y="598" class="tag" fill="#7c3aed">REUSABLE KMP LIBRARY · NO UI · NO DI · NO APP TYPES · COROUTINES ONLY</text>
+  <text x="98" y="618" class="title">:bluetooth</text>
+  <text x="190" y="618" class="sub">package com.majidbahmani.bluetooth · createBluetoothClient()</text>
+
+  <rect x="100" y="630" width="720" height="70" rx="8" class="src"/>
+  <text x="116" y="648" class="tag" fill="#7c3aed">commonMain</text>
+  <text x="116" y="668" class="sub">BluetoothClient (scan, connect) · BleConnection (write, observe) · BluetoothSession</text>
+  <text x="116" y="687" class="sub">SerialPort + SerialProfiles (NUS · HM-10 · FFF0) · models · FakeBluetoothClient</text>
+
+  <rect x="100" y="722" width="350" height="78" rx="8" class="src"/>
+  <text x="116" y="740" class="tag" fill="#7c3aed">androidMain</text>
+  <text x="116" y="760" class="title">AndroidBleClient</text>
+  <text x="116" y="779" class="sub">LeScanner · BluetoothGatt</text>
+  <rect x="300" y="732" width="138" height="56" rx="6" class="later"/>
+  <text x="369" y="755" class="muted" text-anchor="middle">ClassicTransport</text>
+  <text x="369" y="772" class="muted" text-anchor="middle">(later, Android only)</text>
+
+  <rect x="470" y="722" width="350" height="78" rx="8" class="src"/>
+  <text x="486" y="740" class="tag" fill="#7c3aed">iosMain</text>
+  <text x="486" y="760" class="title">IosBleClient</text>
+  <text x="486" y="779" class="sub">CBCentralManager · CBPeripheral</text>
+
+  <!-- implements -->
+  <path d="M200,722 V700" class="impl"/>
+  <path d="M640,722 V700" class="impl"/>
+  <text x="208" y="715" class="lbl" fill="#7c3aed">implements</text>
+  <text x="648" y="715" class="lbl" fill="#7c3aed">implements</text>
+
+  <!-- Row 5: OS stacks -->
+  <rect x="100" y="848" width="350" height="44" rx="8" class="os"/>
+  <text x="275" y="875" class="text" text-anchor="middle">Android Bluetooth stack (android.bluetooth.le)</text>
+  <rect x="470" y="848" width="350" height="44" rx="8" class="os"/>
+  <text x="645" y="875" class="text" text-anchor="middle">iOS CoreBluetooth (platform.CoreBluetooth)</text>
+  <path d="M200,800 V848" class="osCall"/>
+  <path d="M640,800 V848" class="osCall"/>
+
+  <!-- Row 6: device -->
+  <path d="M275,892 L400,936" class="radio"/>
+  <path d="M645,892 L520,936" class="radio"/>
+  <rect x="280" y="936" width="360" height="52" rx="10" class="device"/>
+  <text x="460" y="958" class="title" text-anchor="middle">BLE peripheral</text>
+  <text x="460" y="977" class="sub" text-anchor="middle">HM-10 · Nordic UART · BLE OBD-II dongle</text>
+
+  <!-- :systemdesign -->
+  <rect x="880" y="580" width="242" height="112" rx="10" class="ds"/>
+  <text x="896" y="598" class="tag" fill="#db2777">DESIGN SYSTEM</text>
+  <text x="896" y="618" class="title">:systemdesign</text>
+  <text x="896" y="638" class="sub">Theme (light + dark)</text>
+  <text x="896" y="655" class="sub">Color.kt (internal)</text>
+  <text x="896" y="672" class="sub">components used by 2+</text>
+  <text x="896" y="686" class="sub">features</text>
+
+  <!-- Legend -->
+  <rect x="880" y="712" width="282" height="128" rx="8" class="legend"/>
+  <text x="896" y="732" class="noteTitle" fill="#374151">Legend</text>
+  <path d="M896,752 H940" class="dep"/>
+  <text x="950" y="756" class="lbl">depends on</text>
+  <path d="M896,774 H940" class="ui"/>
+  <text x="950" y="778" class="lbl">uses theme / UI components</text>
+  <path d="M896,796 H940" class="impl"/>
+  <text x="950" y="800" class="lbl">implements (expect/actual or interface)</text>
+  <path d="M896,818 H940" class="osCall"/>
+  <text x="950" y="822" class="lbl">calls platform API</text>
+
+  <!-- Rules -->
+  <rect x="880" y="856" width="282" height="132" rx="8" class="note"/>
+  <text x="896" y="876" class="noteTitle">Rules</text>
+  <text x="896" y="896" class="text">• Shells only start the app</text>
+  <text x="896" y="914" class="text">• Only :app knows every feature</text>
+  <text x="896" y="932" class="text">• Features never import each other</text>
+  <text x="896" y="950" class="text">• :bluetooth: no app types, no DI</text>
+  <text x="896" y="968" class="text">• domain = pure Kotlin, no BLE types</text>
+  <text x="896" y="984" class="text">• iOS: BLE only (no Classic SPP)</text>
+</svg>
