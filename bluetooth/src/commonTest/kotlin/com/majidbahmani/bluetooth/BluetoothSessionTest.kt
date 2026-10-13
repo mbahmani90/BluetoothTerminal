@@ -59,7 +59,7 @@ class BluetoothSessionTest {
     }
 
     @Test
-    fun connect_failure_isDisconnectedWithCause() = runTest {
+    fun connect_failure_isFailedWithCause() = runTest {
         val session = session()
         val timeout = BluetoothException.Timeout("connect")
         client.onConnect = { Result.failure(timeout) }
@@ -67,18 +67,18 @@ class BluetoothSessionTest {
         val result = session.connect(HM10)
 
         assertSame(timeout, result.exceptionOrNull())
-        assertEquals(SessionState.Disconnected(HM10, timeout), session.state.value)
+        assertEquals(SessionState.Failed(HM10, timeout), session.state.value)
         assertNull(session.connection)
     }
 
     @Test
-    fun connect_bluetoothOff_isDisconnectedNotAvailable() = runTest {
+    fun connect_bluetoothOff_isFailedNotAvailable() = runTest {
         val session = session()
         client.adapterState.value = AdapterState.Off
 
         session.connect(HM10)
 
-        val state = assertIs<SessionState.Disconnected>(session.state.value)
+        val state = assertIs<SessionState.Failed>(session.state.value)
         assertIs<BluetoothException.NotAvailable>(state.cause)
     }
 
@@ -94,7 +94,7 @@ class BluetoothSessionTest {
     }
 
     @Test
-    fun linkLost_isDisconnectedWithCause() = runTest {
+    fun linkLost_isLostWithCause() = runTest {
         val session = session()
         val connection = session.connect(HM10).getOrThrow() as FakeBleConnection
         runCurrent()
@@ -103,7 +103,7 @@ class BluetoothSessionTest {
         connection.loseLink(cause)
         runCurrent()
 
-        assertEquals(SessionState.Disconnected(HM10, cause), session.state.value)
+        assertEquals(SessionState.Lost(HM10, cause), session.state.value)
         assertNull(session.connection)
     }
 
