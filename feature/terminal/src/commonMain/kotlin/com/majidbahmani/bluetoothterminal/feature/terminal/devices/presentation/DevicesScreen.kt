@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import bluetoothterminal.feature.terminal.generated.resources.Res
-import bluetoothterminal.feature.terminal.generated.resources.connection_connected
 import bluetoothterminal.feature.terminal.generated.resources.connection_connecting
 import bluetoothterminal.feature.terminal.generated.resources.connection_failed_timeout
 import bluetoothterminal.feature.terminal.generated.resources.connection_failed_unavailable
@@ -38,12 +38,15 @@ import bluetoothterminal.feature.terminal.generated.resources.devices_bluetooth_
 import bluetoothterminal.feature.terminal.generated.resources.devices_checking
 import bluetoothterminal.feature.terminal.generated.resources.devices_open_settings
 import bluetoothterminal.feature.terminal.generated.resources.devices_permission_missing
+import bluetoothterminal.feature.terminal.generated.resources.devices_none_found
 import bluetoothterminal.feature.terminal.generated.resources.devices_retry
+import bluetoothterminal.feature.terminal.generated.resources.devices_scan_again
 import bluetoothterminal.feature.terminal.generated.resources.devices_scan_failed
 import bluetoothterminal.feature.terminal.generated.resources.devices_searching
 import bluetoothterminal.feature.terminal.generated.resources.devices_signal
 import bluetoothterminal.feature.terminal.generated.resources.devices_status_connected
 import bluetoothterminal.feature.terminal.generated.resources.devices_status_connecting
+import bluetoothterminal.feature.terminal.generated.resources.devices_stop
 import bluetoothterminal.feature.terminal.generated.resources.devices_title
 import bluetoothterminal.feature.terminal.generated.resources.devices_turn_on
 import bluetoothterminal.feature.terminal.generated.resources.devices_unnamed
@@ -69,7 +72,8 @@ internal fun DevicesRoute(
     DevicesScreen(
         uiState = uiState,
         onDeviceClick = viewModel::onDeviceClick,
-        onRetry = viewModel::onRetry,
+        onRestartScan = viewModel::onRestartScan,
+        onStopScan = viewModel::onStopScan,
         onRequestPermission = bluetoothActions.requestPermission,
         onEnableBluetooth = bluetoothActions.enableBluetooth,
         onOpenSettings = bluetoothActions.openSettings,
@@ -81,18 +85,34 @@ internal fun DevicesRoute(
 internal fun DevicesScreen(
     uiState: DevicesUiState,
     onDeviceClick: (Device) -> Unit,
-    onRetry: () -> Unit,
+    onRestartScan: () -> Unit,
+    onStopScan: () -> Unit,
     onRequestPermission: () -> Unit,
     onEnableBluetooth: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // No Stop / Scan again while paused: the scan is already stopped and can't restart until the connection ends.
+    val scanAction = when {
+        uiState.isScanPaused -> null
+        uiState.scan is DeviceScan.Scanning -> Res.string.devices_stop to onStopScan
+        uiState.scan is DeviceScan.Finished -> Res.string.devices_scan_again to onRestartScan
+        else -> null
+    }
     Column(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(Res.string.devices_title),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.devices_title),
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f),
+            )
+            scanAction?.let { (label, onClick) ->
+                TextButton(onClick = onClick) { Text(stringResource(label)) }
+            }
+        }
         ConnectionBanner(uiState.connection)
 
         when (val scan = uiState.scan) {
@@ -108,9 +128,15 @@ internal fun DevicesScreen(
                 connection = uiState.connection,
                 onDeviceClick = onDeviceClick,
             )
+            is DeviceScan.Finished -> DeviceList(
+                devices = scan.devices,
+                isScanning = false,
+                connection = uiState.connection,
+                onDeviceClick = onDeviceClick,
+            )
             DeviceScan.Failed -> Message(
                 text = stringResource(Res.string.devices_scan_failed),
-                action = stringResource(Res.string.devices_retry) to onRetry,
+                action = stringResource(Res.string.devices_retry) to onRestartScan,
             )
         }
     }
@@ -119,9 +145,9 @@ internal fun DevicesScreen(
 @Composable
 private fun ConnectionBanner(connection: ConnectionStatus) {
     val text = when (connection) {
-        ConnectionStatus.Disconnected -> return
+        // Connected: the device's row already says so.
+        ConnectionStatus.Disconnected, is ConnectionStatus.Connected -> return
         is ConnectionStatus.Connecting -> stringResource(Res.string.connection_connecting, connection.device.displayName())
-        is ConnectionStatus.Connected -> stringResource(Res.string.connection_connected, connection.device.displayName())
         is ConnectionStatus.Failed -> stringResource(connection.error.message(), connection.device.displayName())
         is ConnectionStatus.Lost -> stringResource(Res.string.connection_lost, connection.device.displayName())
     }
@@ -169,7 +195,8 @@ private fun DeviceList(
 ) {
     if (isScanning) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
     if (devices.isEmpty()) {
-        Message(text = stringResource(Res.string.devices_searching))
+        val text = if (isScanning) Res.string.devices_searching else Res.string.devices_none_found
+        Message(text = stringResource(text))
         return
     }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -236,7 +263,8 @@ private fun DevicesScreenScanningPreview() {
                 connection = ConnectionStatus.Connecting(DeviceInfo(id = "AA:BB:CC:DD:EE:01", name = "HM-10")),
             ),
             onDeviceClick = {},
-            onRetry = {},
+            onRestartScan = {},
+            onStopScan = {},
             onRequestPermission = {},
             onEnableBluetooth = {},
             onOpenSettings = {},
@@ -251,7 +279,8 @@ private fun DevicesScreenPermissionPreview() {
         DevicesScreen(
             uiState = DevicesUiState(scan = DeviceScan.Unavailable(BluetoothAvailability.PermissionMissing)),
             onDeviceClick = {},
-            onRetry = {},
+            onRestartScan = {},
+            onStopScan = {},
             onRequestPermission = {},
             onEnableBluetooth = {},
             onOpenSettings = {},

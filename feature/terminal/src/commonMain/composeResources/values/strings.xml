@@ -12,6 +12,9 @@
 
     <!-- Scanning -->
     <string name="devices_searching">Searching for devices…</string>
+    <string name="devices_none_found">No devices found.</string>
+    <string name="devices_scan_again">Scan again</string>
+    <string name="devices_stop">Stop</string>
     <string name="devices_scan_failed">Scanning stopped because of an error.</string>
     <string name="devices_retry">Try again</string>
     <string name="devices_unnamed">Unnamed device</string>
@@ -21,7 +24,6 @@
 
     <!-- Connection banner -->
     <string name="connection_connecting">Connecting to %1$s…</string>
-    <string name="connection_connected">Connected to %1$s</string>
     <string name="connection_failed_timeout">%1$s didn\'t respond.</string>
     <string name="connection_failed_unavailable">Couldn\'t connect to %1$s: Bluetooth isn\'t available.</string>
     <string name="connection_failed_unknown">Couldn\'t connect to %1$s.</string>
