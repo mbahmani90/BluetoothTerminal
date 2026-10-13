@@ -74,6 +74,9 @@ internal class AndroidBleConnection(
 
     /** Connects, asks for a bigger MTU and discovers services. On any failure or cancellation the GATT is closed. */
     suspend fun open(): Result<Unit> = try {
+        // Deprecated in API 37 in favour of connectGatt(BluetoothGattConnectionSettings, Executor, callback),
+        // which doesn't exist below 37. Still works there; switch with a version check once tested on a 37 device.
+        @Suppress("DEPRECATION")
         gatt = bluetoothDevice.connectGatt(context, false, callback, BluetoothDevice.TRANSPORT_LE)
             ?: throw BluetoothException.Platform("connectGatt returned null")
         connected.await()
