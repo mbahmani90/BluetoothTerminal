@@ -1,6 +1,7 @@
 package com.majidbahmani.bluetooth
 
 import com.majidbahmani.bluetooth.model.BluetoothException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
@@ -13,6 +14,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalCoroutinesApi::class) // runCurrent(), advanceTimeBy()
 class GattQueueTest {
 
     private val queue = GattQueue()
