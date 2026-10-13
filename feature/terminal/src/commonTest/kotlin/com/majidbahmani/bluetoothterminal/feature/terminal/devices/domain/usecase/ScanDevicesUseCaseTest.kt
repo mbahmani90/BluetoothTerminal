@@ -5,15 +5,18 @@ import com.majidbahmani.bluetoothterminal.feature.terminal.devices.domain.model.
 import com.majidbahmani.bluetoothterminal.feature.terminal.devices.domain.model.DeviceScan
 import com.majidbahmani.bluetoothterminal.feature.terminal.devices.fake.FakeDeviceRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class) // runCurrent()
+@OptIn(ExperimentalCoroutinesApi::class) // runCurrent(), advanceTimeBy()
 class ScanDevicesUseCaseTest {
 
     private val repository = FakeDeviceRepository()
@@ -64,6 +67,43 @@ class ScanDevicesUseCaseTest {
         runCurrent()
 
         assertEquals(DeviceScan.Unavailable(BluetoothAvailability.Off), scans.last())
+        assertEquals(0, repository.activeScans)
+    }
+
+    @Test
+    fun scanDurationPassed_stopsAndKeepsDevices() = runTest {
+        repository.devicesInRange.value = listOf(HM10, UNNAMED)
+        val scans = collect()
+
+        advanceTimeBy(ScanDevicesUseCase.SCAN_DURATION)
+        runCurrent()
+
+        assertEquals(DeviceScan.Finished(listOf(HM10)), scans.last())
+        assertEquals(0, repository.activeScans)
+    }
+
+    @Test
+    fun beforeScanDuration_keepsScanning() = runTest {
+        val scans = collect()
+
+        advanceTimeBy(ScanDevicesUseCase.SCAN_DURATION - 1.seconds)
+
+        assertEquals(DeviceScan.Scanning(emptyList()), scans.last())
+        assertEquals(1, repository.activeScans)
+    }
+
+    @Test
+    fun stopRequested_stopsAndKeepsDevices() = runTest {
+        repository.devicesInRange.value = listOf(HM10, UNNAMED)
+        val stop = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        val scans = mutableListOf<DeviceScan>()
+        backgroundScope.launch { scanDevices(stop = stop).collect { scans += it } }
+        runCurrent()
+
+        stop.tryEmit(Unit)
+        runCurrent()
+
+        assertEquals(listOf(DeviceScan.Scanning(listOf(HM10)), DeviceScan.Finished(listOf(HM10))), scans)
         assertEquals(0, repository.activeScans)
     }
 

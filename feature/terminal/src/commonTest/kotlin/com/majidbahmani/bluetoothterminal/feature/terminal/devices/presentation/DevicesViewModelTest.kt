@@ -134,17 +134,58 @@ class DevicesViewModelTest {
     }
 
     @Test
-    fun onRetry_afterFailure_scansAgain() = runTest(dispatcher) {
+    fun onRestartScan_afterFailure_scansAgain() = runTest(dispatcher) {
         devices.scanError = IllegalStateException("scan failed")
         val viewModel = createAndCollect()
         assertEquals(DeviceScan.Failed, viewModel.uiState.value.scan)
 
         devices.scanError = null
         devices.devicesInRange.value = listOf(HM10)
-        viewModel.onRetry()
+        viewModel.onRestartScan()
         runCurrent()
 
         assertEquals(DeviceScan.Scanning(listOf(HM10)), viewModel.uiState.value.scan)
+    }
+
+    @Test
+    fun onRestartScan_afterScanFinished_scansAgain() = runTest(dispatcher) {
+        devices.devicesInRange.value = listOf(HM10)
+        val viewModel = createAndCollect()
+        advanceTimeBy(ScanDevicesUseCase.SCAN_DURATION)
+        runCurrent()
+        assertEquals(DeviceScan.Finished(listOf(HM10)), viewModel.uiState.value.scan)
+
+        viewModel.onRestartScan()
+        runCurrent()
+
+        assertEquals(DeviceScan.Scanning(listOf(HM10)), viewModel.uiState.value.scan)
+        assertEquals(1, devices.activeScans)
+        assertEquals(2, devices.scansStarted)
+    }
+
+    @Test
+    fun onStopScan_stopsAndKeepsList() = runTest(dispatcher) {
+        devices.devicesInRange.value = listOf(HM10)
+        val viewModel = createAndCollect()
+
+        viewModel.onStopScan()
+        runCurrent()
+
+        assertEquals(DeviceScan.Finished(listOf(HM10)), viewModel.uiState.value.scan)
+        assertEquals(0, devices.activeScans)
+    }
+
+    @Test
+    fun onRestartScan_afterStop_scansAgain() = runTest(dispatcher) {
+        val viewModel = createAndCollect()
+        viewModel.onStopScan()
+        runCurrent()
+
+        viewModel.onRestartScan()
+        runCurrent()
+
+        assertEquals(DeviceScan.Scanning(emptyList()), viewModel.uiState.value.scan)
+        assertEquals(1, devices.activeScans)
     }
 
     @Test

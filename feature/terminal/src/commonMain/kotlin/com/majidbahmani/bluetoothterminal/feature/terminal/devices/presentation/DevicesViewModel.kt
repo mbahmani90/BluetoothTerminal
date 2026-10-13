@@ -29,20 +29,21 @@ internal class DevicesViewModel(
 ) : ViewModel() {
 
     private val retryTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val stopRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     private val connection: StateFlow<ConnectionStatus> = observeConnection()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), ConnectionStatus.Disconnected)
 
     /**
      * Paused while connecting or connected ([pausesScan]). While paused nothing is emitted, so the screen
-     * keeps the last list. It resumes once the connection ends; Retry restarts it.
+     * keeps the last list. It resumes once the connection ends; [onRestartScan] restarts it.
      */
     @OptIn(ExperimentalCoroutinesApi::class) // flatMapLatest
     private val scan: Flow<DeviceScan> = combine(
         connection.map { it.pausesScan }.distinctUntilChanged(),
         retryTrigger.onStart { emit(Unit) },
     ) { paused, _ -> paused }
-        .flatMapLatest { paused -> if (paused) emptyFlow() else scanDevices() }
+        .flatMapLatest { paused -> if (paused) emptyFlow() else scanDevices(stop = stopRequests) }
 
     /** WhileSubscribed: the scan stops a few seconds after the screen is no longer visible (battery). */
     val uiState: StateFlow<DevicesUiState> = combine(scan, connection) { scan, connection ->
@@ -53,7 +54,13 @@ internal class DevicesViewModel(
         viewModelScope.launch { connectToDevice(device) }
     }
 
-    fun onRetry() {
+    /** Ends the running scan early; the devices found so far stay listed. */
+    fun onStopScan() {
+        stopRequests.tryEmit(Unit)
+    }
+
+    /** Scan again after it finished or failed. */
+    fun onRestartScan() {
         retryTrigger.tryEmit(Unit)
     }
 
