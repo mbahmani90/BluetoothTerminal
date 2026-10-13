@@ -25,6 +25,8 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class) // setMain, runCurrent, advanceTimeBy
 class DevicesViewModelTest {
@@ -89,12 +91,42 @@ class DevicesViewModelTest {
     }
 
     @Test
-    fun connectingFinished_resumesScan() = runTest(dispatcher) {
-        createAndCollect()
+    fun connected_keepsScanPausedAndList() = runTest(dispatcher) {
+        devices.devicesInRange.value = listOf(HM10)
+        val viewModel = createAndCollect()
         connection.status.value = ConnectionStatus.Connecting(HM10_INFO)
         runCurrent()
 
         connection.status.value = ConnectionStatus.Connected(HM10_INFO)
+        runCurrent()
+
+        assertEquals(0, devices.activeScans)
+        assertEquals(1, devices.scansStarted)
+        assertEquals(DeviceScan.Scanning(listOf(HM10)), viewModel.uiState.value.scan)
+        assertTrue(viewModel.uiState.value.isScanPaused)
+    }
+
+    @Test
+    fun connectionLost_resumesScan() = runTest(dispatcher) {
+        val viewModel = createAndCollect()
+        connection.status.value = ConnectionStatus.Connected(HM10_INFO)
+        runCurrent()
+
+        connection.status.value = ConnectionStatus.Lost(HM10_INFO)
+        runCurrent()
+
+        assertEquals(1, devices.activeScans)
+        assertEquals(2, devices.scansStarted)
+        assertFalse(viewModel.uiState.value.isScanPaused)
+    }
+
+    @Test
+    fun connectFailed_resumesScan() = runTest(dispatcher) {
+        createAndCollect()
+        connection.status.value = ConnectionStatus.Connecting(HM10_INFO)
+        runCurrent()
+
+        connection.status.value = ConnectionStatus.Failed(HM10_INFO, ConnectionError.Timeout)
         runCurrent()
 
         assertEquals(1, devices.activeScans)

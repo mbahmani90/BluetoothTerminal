@@ -34,15 +34,15 @@ internal class DevicesViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), ConnectionStatus.Disconnected)
 
     /**
-     * Paused while connecting: on Android, scanning during a connect makes connection errors (status 133)
-     * more likely. While paused nothing is emitted, so the screen keeps the last list. Retry restarts it.
+     * Paused while connecting or connected ([pausesScan]). While paused nothing is emitted, so the screen
+     * keeps the last list. It resumes once the connection ends; Retry restarts it.
      */
     @OptIn(ExperimentalCoroutinesApi::class) // flatMapLatest
     private val scan: Flow<DeviceScan> = combine(
-        connection.map { it is ConnectionStatus.Connecting }.distinctUntilChanged(),
+        connection.map { it.pausesScan }.distinctUntilChanged(),
         retryTrigger.onStart { emit(Unit) },
-    ) { connecting, _ -> connecting }
-        .flatMapLatest { connecting -> if (connecting) emptyFlow() else scanDevices() }
+    ) { paused, _ -> paused }
+        .flatMapLatest { paused -> if (paused) emptyFlow() else scanDevices() }
 
     /** WhileSubscribed: the scan stops a few seconds after the screen is no longer visible (battery). */
     val uiState: StateFlow<DevicesUiState> = combine(scan, connection) { scan, connection ->
