@@ -14,6 +14,9 @@ public sealed interface SessionState {
         val device: BleDevice get() = connection.device
     }
 
-    /** Connecting failed or the link was lost; [cause] says why. */
-    public data class Disconnected(val device: BleDevice, val cause: BluetoothException) : SessionState
+    /** Connecting to [device] failed; [cause] says why. */
+    public data class Failed(val device: BleDevice, val cause: BluetoothException) : SessionState
+
+    /** Was connected, then the link dropped (out of range, device off, …); [cause] says why. */
+    public data class Lost(val device: BleDevice, val cause: BluetoothException) : SessionState
 }

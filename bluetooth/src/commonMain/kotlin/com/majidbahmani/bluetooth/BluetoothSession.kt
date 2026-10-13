@@ -44,6 +44,7 @@ public class BluetoothSession(
      * Connects to [device], disconnecting the current device first.
      *
      * Calls are handled one after another. Cancelling the caller cancels the attempt (state → [SessionState.Idle]).
+     * A failed attempt ends in [SessionState.Failed]; a link that drops later in [SessionState.Lost].
      */
     public suspend fun connect(device: BleDevice, timeout: Duration = 15.seconds): Result<BleConnection> =
         mutex.withLock {
@@ -61,7 +62,7 @@ public class BluetoothSession(
                     watchLink(connection)
                 }
                 .onFailure { error ->
-                    mutableState.value = SessionState.Disconnected(device, error.asBluetoothException())
+                    mutableState.value = SessionState.Failed(device, error.asBluetoothException())
                 }
         }
 
@@ -73,7 +74,7 @@ public class BluetoothSession(
         }
     }
 
-    /** Stops watching first, so the app's own disconnect isn't reported as a lost link. */
+    /** Stops watching first, so the app's own disconnect isn't reported as lost. */
     private suspend fun closeCurrent() {
         linkWatcher?.cancel()
         linkWatcher = null
@@ -87,7 +88,7 @@ public class BluetoothSession(
             // Only if this connection is still the current one.
             mutableState.compareAndSet(
                 SessionState.Connected(connection),
-                SessionState.Disconnected(connection.device, cause),
+                SessionState.Lost(connection.device, cause),
             )
         }
     }
