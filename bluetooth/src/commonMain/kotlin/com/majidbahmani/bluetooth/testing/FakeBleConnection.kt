@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 public class FakeBleConnection(
     override val device: BleDevice,
     override val services: List<GattService> = emptyList(),
-    override val maxWriteLength: Int = DEFAULT_MAX_WRITE_LENGTH,
+    override val mtu: Int = DEFAULT_MTU,
+    override val maxWriteLength: Int = mtu - ATT_HEADER_SIZE,
 ) : BleConnection {
 
     public data class Write(val characteristic: CharacteristicId, val value: ByteArray, val withResponse: Boolean) {
@@ -79,7 +80,8 @@ public class FakeBleConnection(
     }
 
     private companion object {
-        const val DEFAULT_MAX_WRITE_LENGTH = 20
+        const val DEFAULT_MTU = 23
+        const val ATT_HEADER_SIZE = 3
 
         /** Android's "connection timeout" status, a typical lost-link code. */
         const val LINK_LOST_STATUS = 8
