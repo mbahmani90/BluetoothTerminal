@@ -104,6 +104,7 @@ internal fun DevicesScreen(
             )
             is DeviceScan.Scanning -> DeviceList(
                 devices = scan.devices,
+                isScanning = !uiState.isScanPaused,
                 connection = uiState.connection,
                 onDeviceClick = onDeviceClick,
             )
@@ -162,10 +163,11 @@ private fun UnavailableContent(
 @Composable
 private fun DeviceList(
     devices: List<Device>,
+    isScanning: Boolean,
     connection: ConnectionStatus,
     onDeviceClick: (Device) -> Unit,
 ) {
-    LinearProgressIndicator(modifier = Modifier.fillMaxWidth()) // still scanning
+    if (isScanning) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
     if (devices.isEmpty()) {
         Message(text = stringResource(Res.string.devices_searching))
         return
