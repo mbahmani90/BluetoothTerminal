@@ -10,8 +10,10 @@ is planned for Android only, because iOS has no public API for it.
 
 - **`androidApp` / `iosApp`**: platform shells; they only start the app.
 - **`:app`**: composition root with navigation, Koin setup and the iOS framework.
-- **`:feature:devices`, `:feature:terminal`**: one feature each, with its own data / domain /
-  presentation layers. Features never depend on each other.
+- **`:feature:terminal`**: one feature module for one user goal (connect and talk) with two screens,
+  Devices (scan, connect) and Terminal (send, receive), and its own data / domain / presentation
+  layers. Modules are cut per feature, not per screen; independent features (e.g. macros, history)
+  will get their own modules.
 - **`:bluetooth`**: reusable KMP BLE library (Android `BluetoothGatt`, iOS CoreBluetooth) with no UI,
   no DI and no app types, so it can be used in other projects.
 - **`:systemdesign`**: light and dark theme.
