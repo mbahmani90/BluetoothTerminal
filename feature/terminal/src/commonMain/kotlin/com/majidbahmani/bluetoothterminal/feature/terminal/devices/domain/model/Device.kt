@@ -31,6 +31,9 @@ internal sealed interface DeviceScan {
     /** Scanning; [devices] found so far, in discovery order. */
     data class Scanning(val devices: List<Device>) : DeviceScan
 
+    /** The scan ran its full time or the user stopped it; [devices] is what it found. */
+    data class Finished(val devices: List<Device>) : DeviceScan
+
     /** The platform stopped the scan with an error. */
     data object Failed : DeviceScan
 }
