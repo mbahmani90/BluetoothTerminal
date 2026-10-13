@@ -46,6 +46,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":bluetooth"))
+            implementation(project(":feature:terminal"))
             implementation(project(":systemdesign"))
 
             // api: initKoin() exposes Koin types (KoinAppDeclaration) to the platform apps
