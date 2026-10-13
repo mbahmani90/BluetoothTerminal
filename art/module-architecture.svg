@@ -68,16 +68,12 @@
   <rect x="300" y="190" width="600" height="84" rx="10" class="root"/>
   <text x="316" y="207" class="tag" fill="#4f46e5">COMPOSITION ROOT</text>
   <text x="316" y="227" class="title">:app</text>
-  <text x="316" y="246" class="sub">App() · NavHost (Devices → Terminal) · theme wrapper</text>
+  <text x="316" y="246" class="sub">App() · NavHost · theme wrapper</text>
   <text x="316" y="263" class="sub">initKoin(all modules) · builds iOS framework "Shared"</text>
 
-  <!-- app → features -->
-  <path d="M470,274 L320,342" class="dep"/>
-  <path d="M730,274 L880,342" class="dep"/>
-  <text x="378" y="300" class="lbl" text-anchor="end">nav entry +</text>
-  <text x="378" y="313" class="lbl" text-anchor="end">callbacks</text>
-  <text x="822" y="300" class="lbl">nav entry +</text>
-  <text x="822" y="313" class="lbl">callbacks</text>
+  <!-- app → feature -->
+  <path d="M600,274 V332" class="dep"/>
+  <text x="608" y="308" class="lbl">nav entry: terminalScreens()</text>
 
   <!-- app → bluetooth (Koin wiring lives in :app, not in the library) -->
   <path d="M300,232 H52 V700 H80" class="dep"/>
@@ -87,48 +83,29 @@
   <path d="M900,232 H1150 V636 H1122" class="ui"/>
   <text x="1142" y="420" class="lbl" transform="rotate(90 1142 420)">theme</text>
 
-  <!-- Row 3: features -->
-  <rect x="120" y="342" width="380" height="150" rx="10" class="feature"/>
-  <text x="136" y="359" class="tag" fill="#2563eb">FEATURE</text>
-  <text x="136" y="379" class="title">:feature:devices</text>
-  <text x="136" y="402" class="layerKey">presentation</text>
-  <text x="236" y="402" class="sub">DevicesRoute · DevicesViewModel</text>
-  <text x="136" y="422" class="layerKey">domain</text>
-  <text x="236" y="422" class="sub">ScanDevices · ConnectToDevice</text>
-  <text x="136" y="442" class="layerKey">data</text>
-  <text x="236" y="442" class="sub">DeviceRepositoryImpl</text>
-  <text x="136" y="462" class="layerKey">di</text>
-  <text x="236" y="462" class="sub">devicesModule</text>
-  <text x="136" y="482" class="text">Scan list, adapter/permission states, connect</text>
+  <!-- Row 3: one feature module (two screens, one user goal) -->
+  <rect x="160" y="332" width="880" height="170" rx="10" class="feature"/>
+  <text x="176" y="349" class="tag" fill="#2563eb">FEATURE · ONE USER GOAL: CONNECT AND TALK · TWO SCREENS</text>
+  <text x="176" y="370" class="title">:feature:terminal</text>
 
-  <rect x="700" y="342" width="380" height="150" rx="10" class="feature"/>
-  <text x="716" y="359" class="tag" fill="#2563eb">FEATURE</text>
-  <text x="716" y="379" class="title">:feature:terminal</text>
-  <text x="716" y="402" class="layerKey">presentation</text>
-  <text x="816" y="402" class="sub">TerminalRoute · TerminalViewModel</text>
-  <text x="716" y="422" class="layerKey">domain</text>
-  <text x="816" y="422" class="sub">EncodeMessage · ObserveTerminal</text>
-  <text x="716" y="442" class="layerKey">data</text>
-  <text x="816" y="442" class="sub">TerminalRepositoryImpl</text>
-  <text x="716" y="462" class="layerKey">di</text>
-  <text x="816" y="462" class="sub">terminalModule</text>
-  <text x="716" y="482" class="text">Log (RX/TX), text/hex, line ending, send</text>
+  <text x="176" y="396" class="layerKey">presentation/devices</text>
+  <text x="340" y="396" class="sub">DevicesRoute · DevicesViewModel</text>
+  <text x="176" y="416" class="layerKey">presentation/terminal</text>
+  <text x="340" y="416" class="sub">TerminalRoute · TerminalViewModel</text>
+  <text x="176" y="440" class="layerKey">domain</text>
+  <text x="340" y="440" class="sub">Device · ScanDevices · ConnectToDevice · SendMessage · ObserveTerminal</text>
+  <text x="176" y="460" class="layerKey">data</text>
+  <text x="340" y="460" class="sub">DeviceRepositoryImpl · TerminalRepositoryImpl</text>
+  <text x="176" y="480" class="layerKey">di</text>
+  <text x="340" y="480" class="sub">terminalModule</text>
+  <text x="1024" y="490" class="muted" text-anchor="end">later: own modules for macros, history, settings</text>
 
-  <!-- forbidden feature → feature -->
-  <path d="M500,417 H700" class="forbid"/>
-  <circle cx="600" cy="417" r="11" fill="#ffffff" stroke="#dc2626" stroke-width="1.6"/>
-  <path d="M594,411 L606,423 M606,411 L594,423" stroke="#dc2626" stroke-width="2"/>
-  <text x="600" y="446" class="lblForbid" text-anchor="middle">no feature → feature</text>
+  <!-- feature → bluetooth -->
+  <path d="M460,502 V580" class="dep"/>
+  <text x="468" y="545" class="lbl">BluetoothSession · SerialPort</text>
 
-  <!-- features → bluetooth -->
-  <path d="M310,492 V580" class="dep"/>
-  <path d="M760,492 V580" class="dep"/>
-  <text x="318" y="540" class="lbl">BluetoothSession</text>
-  <text x="680" y="540" class="lbl" text-anchor="end">BluetoothSession</text>
-
-  <!-- features → systemdesign -->
-  <path d="M480,492 V522 H990 V580" class="ui"/>
-  <path d="M1040,492 V580" class="ui"/>
+  <!-- feature → systemdesign -->
+  <path d="M1000,502 V580" class="ui"/>
 
   <!-- Row 4: :bluetooth library -->
   <rect x="80" y="580" width="760" height="232" rx="12" class="lib"/>
@@ -201,7 +178,7 @@
   <text x="896" y="876" class="noteTitle">Rules</text>
   <text x="896" y="896" class="text">• Shells only start the app</text>
   <text x="896" y="914" class="text">• Only :app knows every feature</text>
-  <text x="896" y="932" class="text">• Features never import each other</text>
+  <text x="896" y="932" class="text">• Modules per feature, not per screen</text>
   <text x="896" y="950" class="text">• :bluetooth: no app types, no DI</text>
   <text x="896" y="968" class="text">• domain = pure Kotlin, no BLE types</text>
   <text x="896" y="984" class="text">• iOS: BLE only (no Classic SPP)</text>
