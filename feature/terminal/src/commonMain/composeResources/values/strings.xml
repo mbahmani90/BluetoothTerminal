@@ -1,0 +1,31 @@
+<resources>
+    <string name="devices_title">Devices</string>
+
+    <!-- Bluetooth can't be used -->
+    <string name="devices_checking">Checking Bluetooth…</string>
+    <string name="devices_unsupported">This phone doesn\'t support Bluetooth Low Energy.</string>
+    <string name="devices_permission_missing">Allow Bluetooth access to find devices nearby.</string>
+    <string name="devices_allow">Allow</string>
+    <string name="devices_open_settings">Open settings</string>
+    <string name="devices_bluetooth_off">Bluetooth is off.</string>
+    <string name="devices_turn_on">Turn on Bluetooth</string>
+
+    <!-- Scanning -->
+    <string name="devices_searching">Searching for devices…</string>
+    <string name="devices_none_found">No devices found.</string>
+    <string name="devices_scan_again">Scan again</string>
+    <string name="devices_stop">Stop</string>
+    <string name="devices_scan_failed">Scanning stopped because of an error.</string>
+    <string name="devices_retry">Try again</string>
+    <string name="devices_unnamed">Unnamed device</string>
+    <string name="devices_signal">%1$d dBm</string>
+    <string name="devices_status_connecting">Connecting…</string>
+    <string name="devices_status_connected">Connected</string>
+
+    <!-- Connection banner -->
+    <string name="connection_connecting">Connecting to %1$s…</string>
+    <string name="connection_failed_timeout">%1$s didn\'t respond.</string>
+    <string name="connection_failed_unavailable">Couldn\'t connect to %1$s: Bluetooth isn\'t available.</string>
+    <string name="connection_failed_unknown">Couldn\'t connect to %1$s.</string>
+    <string name="connection_lost">Connection to %1$s lost.</string>
+</resources>
