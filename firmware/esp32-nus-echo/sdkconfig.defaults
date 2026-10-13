@@ -1,0 +1,7 @@
+# Bluetooth with the NimBLE host (lighter than Bluedroid, BLE only)
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+# Original ESP32 only: run the controller in BLE-only mode (ignored on other chips)
+CONFIG_BTDM_CTRL_MODE_BLE_ONLY=y
+# Matches the app's requestMtu(517), so one write can carry up to 514 bytes
+CONFIG_BT_NIMBLE_ATT_PREFERRED_MTU=517
