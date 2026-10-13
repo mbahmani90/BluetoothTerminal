@@ -30,4 +30,5 @@ dependencyResolutionManagement {
 include(":androidApp")
 include(":app")
 include(":bluetooth")
+include(":feature:terminal")
 include(":systemdesign")
