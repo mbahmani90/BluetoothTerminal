@@ -88,6 +88,15 @@ internal class TerminalViewModel(
         }
     }
 
+    fun onMenuOpen() {
+        state.update { it.copy(isMenuOpen = true) }
+    }
+
+    /** Closed by tapping outside, or before an item's action runs. */
+    fun onMenuDismiss() {
+        state.update { it.copy(isMenuOpen = false) }
+    }
+
     fun onDisconnect() {
         viewModelScope.launch { disconnect() }
     }

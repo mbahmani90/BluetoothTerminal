@@ -25,10 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -79,6 +76,8 @@ internal fun TerminalRoute(
         onInputChange = viewModel::onInputChange,
         onSend = viewModel::onSend,
         onDisconnect = viewModel::onDisconnect,
+        onMenuOpen = viewModel::onMenuOpen,
+        onMenuDismiss = viewModel::onMenuDismiss,
         onOpenDevices = onOpenDevices,
         onOpenSettings = onOpenSettings,
         modifier = modifier,
@@ -91,6 +90,8 @@ internal fun TerminalScreen(
     onInputChange: (String) -> Unit,
     onSend: () -> Unit,
     onDisconnect: () -> Unit,
+    onMenuOpen: () -> Unit,
+    onMenuDismiss: () -> Unit,
     onOpenDevices: () -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -109,7 +110,13 @@ internal fun TerminalScreen(
             if (uiState.isConnected) {
                 TextButton(onClick = onDisconnect) { Text(stringResource(Res.string.terminal_disconnect)) }
             }
-            MoreMenu(onOpenDevices = onOpenDevices, onOpenSettings = onOpenSettings)
+            MoreMenu(
+                expanded = uiState.isMenuOpen,
+                onOpen = onMenuOpen,
+                onDismiss = onMenuDismiss,
+                onOpenDevices = onOpenDevices,
+                onOpenSettings = onOpenSettings,
+            )
         }
         val lost = uiState.connection as? ConnectionStatus.Lost
         if (lost != null) {
@@ -143,24 +150,30 @@ internal fun TerminalScreen(
 
 /** ⋮ in the top bar: Devices goes back to the device list (the connection stays); Settings lists the services. */
 @Composable
-private fun MoreMenu(onOpenDevices: () -> Unit, onOpenSettings: () -> Unit) {
-    var expanded by remember { mutableStateOf(false) } // UI-only: whether the menu is open
+private fun MoreMenu(
+    expanded: Boolean,
+    onOpen: () -> Unit,
+    onDismiss: () -> Unit,
+    onOpenDevices: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    // Open/closed lives in TerminalUiState (doc 29), so it survives recomposition and is testable.
     Box {
-        IconButton(onClick = { expanded = true }) {
+        IconButton(onClick = onOpen) {
             Icon(painterResource(Res.drawable.ic_more_vert), contentDescription = stringResource(Res.string.terminal_more))
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.terminal_menu_devices)) },
                 onClick = {
-                    expanded = false
+                    onDismiss()
                     onOpenDevices()
                 },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.terminal_menu_settings)) },
                 onClick = {
-                    expanded = false
+                    onDismiss()
                     onOpenSettings()
                 },
             )
@@ -264,6 +277,8 @@ private fun TerminalScreenPreview() {
             onInputChange = {},
             onSend = {},
             onDisconnect = {},
+            onMenuOpen = {},
+            onMenuDismiss = {},
             onOpenDevices = {},
             onOpenSettings = {},
         )
