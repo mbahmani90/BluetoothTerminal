@@ -22,6 +22,17 @@
     <string name="devices_status_connecting">Connecting…</string>
     <string name="devices_status_connected">Connected</string>
 
+    <!-- Terminal -->
+    <string name="terminal_title">Terminal</string>
+    <string name="terminal_disconnect">Disconnect</string>
+    <string name="terminal_empty">No messages yet.</string>
+    <string name="terminal_input_hint">Message</string>
+    <string name="terminal_send">Send</string>
+    <string name="terminal_error_not_connected">Not connected.</string>
+    <string name="terminal_error_no_target">No characteristic selected to send to.</string>
+    <string name="terminal_error_not_supported">This characteristic can\'t be written.</string>
+    <string name="terminal_error_failed">Couldn\'t send. Try again.</string>
+
     <!-- Connection banner -->
     <string name="connection_connecting">Connecting to %1$s…</string>
     <string name="connection_failed_timeout">%1$s didn\'t respond.</string>
