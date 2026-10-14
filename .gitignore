@@ -20,3 +20,9 @@ node_modules/
 
 # Personal notes / playbook
 /doc/
+
+# Android release signing
+keystore.properties
+keystore/
+*.jks
+*.keystore
