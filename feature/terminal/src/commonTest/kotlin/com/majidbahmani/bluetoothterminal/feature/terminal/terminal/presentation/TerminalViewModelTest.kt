@@ -185,6 +185,18 @@ class TerminalViewModelTest {
     }
 
     @Test
+    fun menu_opensAndDismisses() = runTest(dispatcher) {
+        val viewModel = create()
+        assertFalse(viewModel.uiState.value.isMenuOpen)
+
+        viewModel.onMenuOpen()
+        assertTrue(viewModel.uiState.value.isMenuOpen)
+
+        viewModel.onMenuDismiss()
+        assertFalse(viewModel.uiState.value.isMenuOpen)
+    }
+
+    @Test
     fun onDisconnect_disconnects() = runTest(dispatcher) {
         val viewModel = create()
 
