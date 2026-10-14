@@ -65,6 +65,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun TerminalRoute(
     onOpenDevices: () -> Unit,
+    onOpenSettings: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TerminalViewModel = koinViewModel(),
@@ -79,6 +80,7 @@ internal fun TerminalRoute(
         onSend = viewModel::onSend,
         onDisconnect = viewModel::onDisconnect,
         onOpenDevices = onOpenDevices,
+        onOpenSettings = onOpenSettings,
         modifier = modifier,
     )
 }
@@ -90,6 +92,7 @@ internal fun TerminalScreen(
     onSend: () -> Unit,
     onDisconnect: () -> Unit,
     onOpenDevices: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // The keyboard is handled once, by App's safeDrawingPadding (it includes the IME insets).
@@ -106,7 +109,7 @@ internal fun TerminalScreen(
             if (uiState.isConnected) {
                 TextButton(onClick = onDisconnect) { Text(stringResource(Res.string.terminal_disconnect)) }
             }
-            MoreMenu(onOpenDevices = onOpenDevices)
+            MoreMenu(onOpenDevices = onOpenDevices, onOpenSettings = onOpenSettings)
         }
         val lost = uiState.connection as? ConnectionStatus.Lost
         if (lost != null) {
@@ -138,9 +141,9 @@ internal fun TerminalScreen(
     }
 }
 
-/** ⋮ in the top bar: Devices goes back to the device list (the connection stays); Settings comes later. */
+/** ⋮ in the top bar: Devices goes back to the device list (the connection stays); Settings lists the services. */
 @Composable
-private fun MoreMenu(onOpenDevices: () -> Unit) {
+private fun MoreMenu(onOpenDevices: () -> Unit, onOpenSettings: () -> Unit) {
     var expanded by remember { mutableStateOf(false) } // UI-only: whether the menu is open
     Box {
         IconButton(onClick = { expanded = true }) {
@@ -154,11 +157,12 @@ private fun MoreMenu(onOpenDevices: () -> Unit) {
                     onOpenDevices()
                 },
             )
-            // No Settings screen yet: shown so the menu has its final shape.
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.terminal_menu_settings)) },
-                onClick = {},
-                enabled = false,
+                onClick = {
+                    expanded = false
+                    onOpenSettings()
+                },
             )
         }
     }
@@ -261,6 +265,7 @@ private fun TerminalScreenPreview() {
             onSend = {},
             onDisconnect = {},
             onOpenDevices = {},
+            onOpenSettings = {},
         )
     }
 }
