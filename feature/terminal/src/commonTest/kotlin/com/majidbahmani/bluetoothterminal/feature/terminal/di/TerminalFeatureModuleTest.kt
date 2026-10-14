@@ -6,6 +6,10 @@ import com.majidbahmani.bluetooth.testing.FakeBluetoothClient
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.usecase.ObserveConnectionUseCase
 import com.majidbahmani.bluetoothterminal.feature.terminal.devices.domain.usecase.ConnectToDeviceUseCase
 import com.majidbahmani.bluetoothterminal.feature.terminal.devices.domain.usecase.ScanDevicesUseCase
+import com.majidbahmani.bluetoothterminal.feature.terminal.settings.domain.usecase.ObserveServiceSettingsUseCase
+import com.majidbahmani.bluetoothterminal.feature.terminal.settings.domain.usecase.ReadCharacteristicUseCase
+import com.majidbahmani.bluetoothterminal.feature.terminal.settings.domain.usecase.SetListeningUseCase
+import com.majidbahmani.bluetoothterminal.feature.terminal.settings.domain.usecase.SetSendTargetUseCase
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.usecase.ObserveMessagesUseCase
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.test.TestScope
@@ -38,5 +42,9 @@ class TerminalFeatureModuleTest {
         assertNotNull(app.koin.get<ConnectToDeviceUseCase>())
         assertNotNull(app.koin.get<ObserveMessagesUseCase>())
         assertNotNull(app.koin.get<SendMessageUseCase>())
+        assertNotNull(app.koin.get<ObserveServiceSettingsUseCase>())
+        assertNotNull(app.koin.get<SetSendTargetUseCase>())
+        assertNotNull(app.koin.get<SetListeningUseCase>())
+        assertNotNull(app.koin.get<ReadCharacteristicUseCase>())
     }
 }
