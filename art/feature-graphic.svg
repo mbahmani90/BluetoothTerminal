@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" width="1024" height="500">
+  <!-- Google Play feature graphic (1024x500). Same glyphs and colors as app-icon.svg. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1E88E5"/>
+      <stop offset="1" stop-color="#0D47A1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="500" fill="url(#bg)"/>
+  <g fill="none" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(200 250) scale(4.2) translate(-54 -54)">
+    <path stroke="#FFFFFF" d="M32,47 L39,54 L32,61"/>
+    <path stroke="#FFFFFF" d="M46,45 L62,63 L54,72 L54,36 L62,45 L46,63"/>
+    <path stroke="#69F0AE" d="M68,72 L76,72"/>
+  </g>
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif" fill="#FFFFFF">
+    <text x="350" y="232" font-size="62" font-weight="700">Bluetooth Terminal</text>
+    <text x="352" y="290" font-size="30" fill="#BBDEFB">Scan, connect, send and receive</text>
+    <text x="352" y="332" font-size="30" fill="#BBDEFB">with Bluetooth Low Energy devices</text>
+  </g>
+</svg>
