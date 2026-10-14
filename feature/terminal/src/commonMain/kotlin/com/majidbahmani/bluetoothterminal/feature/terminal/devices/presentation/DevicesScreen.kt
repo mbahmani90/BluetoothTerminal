@@ -20,7 +20,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -63,11 +65,14 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun DevicesRoute(
+    onOpenTerminal: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DevicesViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val bluetoothActions = rememberBluetoothActions()
+    val currentOnOpenTerminal by rememberUpdatedState(onOpenTerminal)
+    LaunchedEffect(viewModel) { viewModel.openTerminal.collect { currentOnOpenTerminal() } }
 
     DevicesScreen(
         uiState = uiState,

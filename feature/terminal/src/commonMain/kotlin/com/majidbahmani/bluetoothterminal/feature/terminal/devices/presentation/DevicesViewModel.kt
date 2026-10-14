@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -30,6 +32,7 @@ internal class DevicesViewModel(
 
     private val retryTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private val stopRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val openTerminalRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     private val connection: StateFlow<ConnectionStatus> = observeConnection()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), ConnectionStatus.Disconnected)
@@ -50,8 +53,29 @@ internal class DevicesViewModel(
         DevicesUiState(scan = scan, connection = connection)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DevicesUiState())
 
+    /**
+     * One event each time the Terminal should open: a connect attempt just succeeded (Connecting → Connected),
+     * or the user tapped the device that is already connected. Collect it while the screen is shown; coming
+     * back to the screen while still connected doesn't open the Terminal again.
+     */
+    val openTerminal: Flow<Unit> = merge(
+        flow {
+            var previous: ConnectionStatus? = null
+            connection.collect { current ->
+                if (previous is ConnectionStatus.Connecting && current is ConnectionStatus.Connected) emit(Unit)
+                previous = current
+            }
+        },
+        openTerminalRequests,
+    )
+
     fun onDeviceClick(device: Device) {
-        viewModelScope.launch { connectToDevice(device) }
+        val current = connection.value
+        if (current is ConnectionStatus.Connected && current.device.id == device.id) {
+            openTerminalRequests.tryEmit(Unit)
+        } else {
+            viewModelScope.launch { connectToDevice(device) }
+        }
     }
 
     /** Ends the running scan early; the devices found so far stay listed. */

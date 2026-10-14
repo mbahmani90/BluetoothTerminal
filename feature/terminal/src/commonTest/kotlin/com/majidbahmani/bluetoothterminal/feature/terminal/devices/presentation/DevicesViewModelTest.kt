@@ -79,6 +79,55 @@ class DevicesViewModelTest {
     }
 
     @Test
+    fun openTerminal_connectSucceeds_emitsOnce() = runTest(dispatcher) {
+        val viewModel = createAndCollect()
+        val events = collectOpenTerminal(viewModel)
+
+        connection.status.value = ConnectionStatus.Connecting(HM10_INFO)
+        runCurrent()
+        connection.status.value = ConnectionStatus.Connected(HM10_INFO)
+        runCurrent()
+
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun openTerminal_alreadyConnectedWhenShown_doesNotEmit() = runTest(dispatcher) {
+        connection.status.value = ConnectionStatus.Connected(HM10_INFO)
+        val viewModel = createAndCollect()
+
+        val events = collectOpenTerminal(viewModel)
+
+        assertEquals(0, events.size)
+    }
+
+    @Test
+    fun openTerminal_connectFails_doesNotEmit() = runTest(dispatcher) {
+        val viewModel = createAndCollect()
+        val events = collectOpenTerminal(viewModel)
+
+        connection.status.value = ConnectionStatus.Connecting(HM10_INFO)
+        runCurrent()
+        connection.status.value = ConnectionStatus.Failed(HM10_INFO, ConnectionError.Timeout)
+        runCurrent()
+
+        assertEquals(0, events.size)
+    }
+
+    @Test
+    fun onDeviceClick_connectedDevice_opensTerminalWithoutReconnecting() = runTest(dispatcher) {
+        connection.status.value = ConnectionStatus.Connected(HM10_INFO)
+        val viewModel = createAndCollect()
+        val events = collectOpenTerminal(viewModel)
+
+        viewModel.onDeviceClick(HM10)
+        runCurrent()
+
+        assertEquals(1, events.size)
+        assertEquals(emptyList(), devices.connectRequests)
+    }
+
+    @Test
     fun connecting_pausesScanAndKeepsList() = runTest(dispatcher) {
         devices.devicesInRange.value = listOf(HM10)
         val viewModel = createAndCollect()
@@ -213,6 +262,13 @@ class DevicesViewModelTest {
         backgroundScope.launch { viewModel.uiState.collect {} }
         runCurrent()
         return viewModel
+    }
+
+    private fun TestScope.collectOpenTerminal(viewModel: DevicesViewModel): List<Unit> {
+        val events = mutableListOf<Unit>()
+        backgroundScope.launch { viewModel.openTerminal.collect { events += it } }
+        runCurrent()
+        return events
     }
 
     private companion object {

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +13,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -22,6 +25,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -32,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import bluetoothterminal.feature.terminal.generated.resources.Res
 import bluetoothterminal.feature.terminal.generated.resources.connection_lost
 import bluetoothterminal.feature.terminal.generated.resources.devices_unnamed
+import bluetoothterminal.feature.terminal.generated.resources.ic_more_vert
 import bluetoothterminal.feature.terminal.generated.resources.terminal_disconnect
 import bluetoothterminal.feature.terminal.generated.resources.terminal_empty
 import bluetoothterminal.feature.terminal.generated.resources.terminal_error_failed
@@ -39,6 +47,9 @@ import bluetoothterminal.feature.terminal.generated.resources.terminal_error_no_
 import bluetoothterminal.feature.terminal.generated.resources.terminal_error_not_connected
 import bluetoothterminal.feature.terminal.generated.resources.terminal_error_not_supported
 import bluetoothterminal.feature.terminal.generated.resources.terminal_input_hint
+import bluetoothterminal.feature.terminal.generated.resources.terminal_menu_devices
+import bluetoothterminal.feature.terminal.generated.resources.terminal_menu_settings
+import bluetoothterminal.feature.terminal.generated.resources.terminal_more
 import bluetoothterminal.feature.terminal.generated.resources.terminal_send
 import bluetoothterminal.feature.terminal.generated.resources.terminal_title
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.model.ChannelError
@@ -47,21 +58,27 @@ import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.mod
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.model.DeviceInfo
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.model.TerminalMessage
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun TerminalRoute(
+    onOpenDevices: () -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TerminalViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentOnClose by rememberUpdatedState(onClose)
+    LaunchedEffect(viewModel) { viewModel.closed.collect { currentOnClose() } }
 
     TerminalScreen(
         uiState = uiState,
         onInputChange = viewModel::onInputChange,
         onSend = viewModel::onSend,
         onDisconnect = viewModel::onDisconnect,
+        onOpenDevices = onOpenDevices,
         modifier = modifier,
     )
 }
@@ -72,9 +89,11 @@ internal fun TerminalScreen(
     onInputChange: (String) -> Unit,
     onSend: () -> Unit,
     onDisconnect: () -> Unit,
+    onOpenDevices: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxSize().imePadding()) {
+    // The keyboard is handled once, by App's safeDrawingPadding (it includes the IME insets).
+    Column(modifier = modifier.fillMaxSize()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
@@ -87,6 +106,7 @@ internal fun TerminalScreen(
             if (uiState.isConnected) {
                 TextButton(onClick = onDisconnect) { Text(stringResource(Res.string.terminal_disconnect)) }
             }
+            MoreMenu(onOpenDevices = onOpenDevices)
         }
         val lost = uiState.connection as? ConnectionStatus.Lost
         if (lost != null) {
@@ -115,6 +135,32 @@ internal fun TerminalScreen(
             onInputChange = onInputChange,
             onSend = onSend,
         )
+    }
+}
+
+/** ⋮ in the top bar: Devices goes back to the device list (the connection stays); Settings comes later. */
+@Composable
+private fun MoreMenu(onOpenDevices: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) } // UI-only: whether the menu is open
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(painterResource(Res.drawable.ic_more_vert), contentDescription = stringResource(Res.string.terminal_more))
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.terminal_menu_devices)) },
+                onClick = {
+                    expanded = false
+                    onOpenDevices()
+                },
+            )
+            // No Settings screen yet: shown so the menu has its final shape.
+            DropdownMenuItem(
+                text = { Text(stringResource(Res.string.terminal_menu_settings)) },
+                onClick = {},
+                enabled = false,
+            )
+        }
     }
 }
 
@@ -214,6 +260,7 @@ private fun TerminalScreenPreview() {
             onInputChange = {},
             onSend = {},
             onDisconnect = {},
+            onOpenDevices = {},
         )
     }
 }

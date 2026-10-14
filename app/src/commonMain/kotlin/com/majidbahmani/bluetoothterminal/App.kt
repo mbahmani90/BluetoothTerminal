@@ -26,7 +26,7 @@ fun App() {
                 startDestination = TerminalGraph,
                 modifier = Modifier.safeDrawingPadding(),
             ) {
-                terminalScreens()
+                terminalScreens(navController)
             }
         }
     }

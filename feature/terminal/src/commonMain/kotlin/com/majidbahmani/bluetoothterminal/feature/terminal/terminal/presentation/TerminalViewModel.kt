@@ -9,9 +9,12 @@ import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.use
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.model.TerminalMessage
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.usecase.ObserveMessagesUseCase
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.usecase.SendMessageUseCase
+import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.model.ConnectionStatus
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -40,6 +43,21 @@ internal class TerminalViewModel(
         observeMessages()
             .onEach { message -> state.update { it.copy(messages = it.messages.plusCapped(message)) } }
             .launchIn(viewModelScope)
+    }
+
+    /**
+     * Emits when the connection ends on purpose (Disconnect, here or elsewhere), so the screen can close.
+     * Not when the link is lost: the screen stays with the log and the "lost" banner.
+     */
+    val closed: Flow<Unit> = flow {
+        var previous: ConnectionStatus? = null
+        uiState.collect { state ->
+            val current = state.connection
+            if (previous != null && previous !is ConnectionStatus.Disconnected && current is ConnectionStatus.Disconnected) {
+                emit(Unit)
+            }
+            previous = current
+        }
     }
 
     fun onInputChange(text: String) {
