@@ -15,8 +15,13 @@ internal data class TerminalUiState(
     val sendError: ChannelError? = null,
     /** The ⋮ menu is open. */
     val isMenuOpen: Boolean = false,
+    /** An item was chosen: navigate once the menu is off screen, then clear it. */
+    val pendingMenuAction: MenuAction? = null,
 ) {
     val isConnected: Boolean get() = connection is ConnectionStatus.Connected
 
     val canSend: Boolean get() = isConnected && input.isNotEmpty() && !isSending
 }
+
+/** Items of the Terminal's ⋮ menu. */
+internal enum class MenuAction { Devices, Settings }

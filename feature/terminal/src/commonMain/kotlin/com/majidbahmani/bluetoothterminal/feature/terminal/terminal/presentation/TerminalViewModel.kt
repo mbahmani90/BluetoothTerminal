@@ -92,9 +92,18 @@ internal class TerminalViewModel(
         state.update { it.copy(isMenuOpen = true) }
     }
 
-    /** Closed by tapping outside, or before an item's action runs. */
+    /** Closed by tapping outside. */
     fun onMenuDismiss() {
         state.update { it.copy(isMenuOpen = false) }
+    }
+
+    /** Closes the menu first; the screen navigates for [action] once the menu is gone (see [onMenuActionHandled]). */
+    fun onMenuItemClick(action: MenuAction) {
+        state.update { it.copy(isMenuOpen = false, pendingMenuAction = action) }
+    }
+
+    fun onMenuActionHandled() {
+        state.update { it.copy(pendingMenuAction = null) }
     }
 
     fun onDisconnect() {

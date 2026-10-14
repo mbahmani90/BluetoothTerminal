@@ -1,5 +1,7 @@
 package com.majidbahmani.bluetoothterminal
 
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -25,9 +27,17 @@ fun App() {
                 navController = navController,
                 startDestination = TerminalGraph,
                 modifier = Modifier.safeDrawingPadding(),
+                // Standard push instead of the default 700 ms crossfade: the new screen slides in from the
+                // end, Back slides it out again.
+                enterTransition = { slideIntoContainer(SlideDirection.Start, tween(TRANSITION_MILLIS)) },
+                exitTransition = { slideOutOfContainer(SlideDirection.Start, tween(TRANSITION_MILLIS)) },
+                popEnterTransition = { slideIntoContainer(SlideDirection.End, tween(TRANSITION_MILLIS)) },
+                popExitTransition = { slideOutOfContainer(SlideDirection.End, tween(TRANSITION_MILLIS)) },
             ) {
                 terminalScreens(navController)
             }
         }
     }
 }
+
+private const val TRANSITION_MILLIS = 300

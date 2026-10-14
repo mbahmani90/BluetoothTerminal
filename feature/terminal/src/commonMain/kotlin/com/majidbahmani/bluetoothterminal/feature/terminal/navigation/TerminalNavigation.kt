@@ -42,6 +42,9 @@ fun NavGraphBuilder.terminalScreens(navController: NavController) {
                 onClose = { backToDevices() },
             )
         }
-        composable<SettingsDestination> { SettingsRoute() }
+        composable<SettingsDestination> {
+            // Pops only Settings: a double tap can't also close the Terminal.
+            SettingsRoute(onBack = { navController.popBackStack(SettingsDestination, inclusive = true) })
+        }
     }
 }
