@@ -49,3 +49,12 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 ---
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### Releasing the Android app
+
+1. Create an upload key once (keep the file and passwords safe, outside git; an absolute
+   `storeFile` path lets the keystore live outside the repo):
+   `keytool -genkeypair -v -keystore keystore/upload-keystore.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000`
+2. Copy `keystore.properties.example` to `keystore.properties` and fill in the passwords.
+   On CI, set `ANDROID_KEYSTORE_FILE`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and `ANDROID_KEY_PASSWORD` instead.
+3. Build the bundle for Google Play: `./gradlew :androidApp:bundleRelease`
+   (output: `androidApp/build/outputs/bundle/release/androidApp-release.aab`).
