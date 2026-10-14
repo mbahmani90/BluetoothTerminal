@@ -2,8 +2,11 @@ package com.majidbahmani.bluetoothterminal.feature.terminal.connection.di
 
 import com.majidbahmani.bluetooth.BluetoothSession
 import com.majidbahmani.bluetooth.testing.FakeBluetoothClient
+import com.majidbahmani.bluetoothterminal.feature.terminal.connection.data.repository.ChannelRepositoryImpl
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.data.repository.ConnectionRepositoryImpl
+import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.repository.ChannelRepository
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.repository.ConnectionRepository
+import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.usecase.DisconnectUseCase
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.usecase.ObserveConnectionUseCase
 import kotlinx.coroutines.test.TestScope
 import org.koin.dsl.koinApplication
@@ -36,7 +39,16 @@ class ConnectionModuleTest {
     }
 
     @Test
-    fun observeConnectionUseCase_resolves() {
+    fun channelRepository_isSingletonImplementation() {
+        val repository = app.koin.get<ChannelRepository>()
+
+        assertIs<ChannelRepositoryImpl>(repository)
+        assertSame(repository, app.koin.get<ChannelRepository>())
+    }
+
+    @Test
+    fun useCases_resolve() {
         assertNotNull(app.koin.get<ObserveConnectionUseCase>())
+        assertNotNull(app.koin.get<DisconnectUseCase>())
     }
 }
