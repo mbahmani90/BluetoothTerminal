@@ -18,7 +18,9 @@ import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.useca
 import com.majidbahmani.bluetoothterminal.feature.terminal.terminal.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -161,6 +163,28 @@ class TerminalViewModelTest {
     }
 
     @Test
+    fun closed_emitsWhenDisconnected() = runTest(dispatcher) {
+        val viewModel = create()
+        val events = collectClosed(viewModel)
+
+        viewModel.onDisconnect()
+        runCurrent()
+
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun closed_linkLost_doesNotEmit() = runTest(dispatcher) {
+        val viewModel = create()
+        val events = collectClosed(viewModel)
+
+        connection.status.value = ConnectionStatus.Lost(ESP32)
+        runCurrent()
+
+        assertEquals(0, events.size)
+    }
+
+    @Test
     fun onDisconnect_disconnects() = runTest(dispatcher) {
         val viewModel = create()
 
@@ -177,6 +201,13 @@ class TerminalViewModelTest {
         sendMessage = SendMessageUseCase(channel),
         disconnect = DisconnectUseCase(connection),
     ).also { dispatcher.scheduler.runCurrent() }
+
+    private fun TestScope.collectClosed(viewModel: TerminalViewModel): List<Unit> {
+        val events = mutableListOf<Unit>()
+        backgroundScope.launch { viewModel.closed.collect { events += it } }
+        runCurrent()
+        return events
+    }
 
     private fun receive(text: String) {
         channel.incoming.tryEmit(IncomingData(TX, text.encodeToByteArray()))
