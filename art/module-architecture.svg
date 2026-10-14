@@ -1,25 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1010" width="1200" height="1010" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1250" width="1400" height="1250" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
-    </marker>
-    <marker id="arrowUi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
-    </marker>
-    <marker id="arrowImpl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#ffffff" stroke="#7c3aed" stroke-width="1.2"/>
-    </marker>
-    <marker id="arrowOs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/>
-    </marker>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker>
+    <marker id="arrowUse" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker>
+    <marker id="arrowImpl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ffffff" stroke="#7c3aed" stroke-width="1.2"/></marker>
+    <marker id="arrowOs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/></marker>
     <style>
       .shell { fill: #f9fafb; stroke: #374151; stroke-width: 1.5; }
       .root { fill: #eef2ff; stroke: #4f46e5; stroke-width: 1.8; }
-      .feature { fill: #ffffff; stroke: #2563eb; stroke-width: 1.6; }
+      .feature { fill: #ffffff; stroke: #2563eb; stroke-width: 1.8; }
+      .pkg { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.2; }
+      .pres { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1; }
+      .dom { fill: #ecfdf5; stroke: #10b981; stroke-width: 1; }
+      .data { fill: #fff7ed; stroke: #f97316; stroke-width: 1; }
+      .di { fill: #f3f4f6; stroke: #9ca3af; stroke-width: 1; }
+      .none { fill: #ffffff; stroke: #d1d5db; stroke-width: 1; stroke-dasharray: 4 3; }
       .lib { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.8; }
-      .src { fill: #ffffff; stroke: #7c3aed; stroke-width: 1.3; }
+      .src { fill: #ffffff; stroke: #a78bfa; stroke-width: 1.1; }
       .later { fill: #ffffff; stroke: #9ca3af; stroke-width: 1.2; stroke-dasharray: 5 3; }
-      .ds { fill: #fdf2f8; stroke: #db2777; stroke-width: 1.6; }
+      .ds { fill: #fdf2f8; stroke: #db2777; stroke-width: 1.6; stroke-dasharray: 5 3; }
       .os { fill: #ecfdf5; stroke: #0d9488; stroke-width: 1.4; }
       .device { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.5; }
       .note { fill: #fefce8; stroke: #ca8a04; stroke-width: 1.2; }
@@ -27,159 +25,204 @@
       .h1 { font-size: 20px; font-weight: 700; fill: #111827; }
       .h1sub { font-size: 12.5px; fill: #6b7280; }
       .title { font-size: 14.5px; font-weight: 700; fill: #111827; }
+      .pkgTitle { font-size: 13px; font-weight: 700; fill: #111827; font-family: Menlo, Consolas, monospace; }
       .tag { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; }
-      .sub { font-size: 11px; fill: #4b5563; font-family: Menlo, Consolas, monospace; }
-      .layerKey { font-size: 11px; fill: #2563eb; font-weight: 700; font-family: Menlo, Consolas, monospace; }
+      .layer { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+      .sub { font-size: 10.5px; fill: #374151; font-family: Menlo, Consolas, monospace; }
       .text { font-size: 11.5px; fill: #374151; }
-      .muted { font-size: 11px; fill: #9ca3af; font-style: italic; }
+      .muted { font-size: 10.5px; fill: #9ca3af; font-style: italic; }
       .noteTitle { font-size: 12.5px; font-weight: 700; fill: #854d0e; }
       .dep { stroke: #374151; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
-      .ui { stroke: #9ca3af; stroke-width: 1.3; fill: none; stroke-dasharray: 4 3; marker-end: url(#arrowUi); }
-      .impl { stroke: #7c3aed; stroke-width: 1.4; fill: none; stroke-dasharray: 3 3; marker-end: url(#arrowImpl); }
+      .use { stroke: #059669; stroke-width: 1.3; fill: none; stroke-dasharray: 5 3; marker-end: url(#arrowUse); }
+      .impl { stroke: #7c3aed; stroke-width: 1.3; fill: none; stroke-dasharray: 3 3; marker-end: url(#arrowImpl); }
       .osCall { stroke: #0d9488; stroke-width: 1.4; fill: none; marker-end: url(#arrowOs); }
       .radio { stroke: #ea580c; stroke-width: 1.4; fill: none; stroke-dasharray: 2 4; }
-      .forbid { stroke: #dc2626; stroke-width: 1.6; fill: none; stroke-dasharray: 6 4; }
       .lbl { font-size: 10.5px; fill: #374151; }
-      .lblForbid { font-size: 11px; fill: #dc2626; font-weight: 700; }
     </style>
   </defs>
-
-  <rect width="1200" height="1010" fill="#ffffff"/>
-
-  <!-- Header -->
-  <text x="40" y="36" class="h1">BluetoothTerminal — multi-module architecture (KMP, BLE first)</text>
-  <text x="40" y="56" class="h1sub">Arrows point to the module that is depended on. Clean Architecture layers live inside each feature module.</text>
-
-  <!-- Row 1: platform shells -->
-  <rect x="250" y="76" width="260" height="62" rx="10" class="shell"/>
-  <text x="266" y="92" class="tag" fill="#374151">PLATFORM SHELL</text>
-  <text x="266" y="111" class="title">androidApp</text>
-  <text x="266" y="128" class="sub">MainActivity · Manifest permissions</text>
-
-  <rect x="690" y="76" width="260" height="62" rx="10" class="shell"/>
-  <text x="706" y="92" class="tag" fill="#374151">PLATFORM SHELL</text>
-  <text x="706" y="111" class="title">iosApp</text>
-  <text x="706" y="128" class="sub">SwiftUI · NSBluetoothAlwaysUsage…</text>
-
-  <path d="M380,138 L470,190" class="dep"/>
-  <path d="M820,138 L730,190" class="dep"/>
-
-  <!-- Row 2: composition root -->
-  <rect x="300" y="190" width="600" height="84" rx="10" class="root"/>
-  <text x="316" y="207" class="tag" fill="#4f46e5">COMPOSITION ROOT</text>
-  <text x="316" y="227" class="title">:app</text>
-  <text x="316" y="246" class="sub">App() · NavHost · theme wrapper</text>
-  <text x="316" y="263" class="sub">initKoin(all modules) · builds iOS framework "Shared"</text>
-
-  <!-- app → feature -->
-  <path d="M600,274 V332" class="dep"/>
-  <text x="608" y="308" class="lbl">nav entry: terminalScreens()</text>
-
-  <!-- app → bluetooth (Koin wiring lives in :app, not in the library) -->
-  <path d="M300,232 H52 V700 H80" class="dep"/>
-  <text x="68" y="560" class="lbl" transform="rotate(-90 68 560)">Koin in :app: single { createBluetoothClient() }</text>
-
-  <!-- app → systemdesign -->
-  <path d="M900,232 H1150 V636 H1122" class="ui"/>
-  <text x="1142" y="420" class="lbl" transform="rotate(90 1142 420)">theme</text>
-
-  <!-- Row 3: one feature module (two screens, one user goal) -->
-  <rect x="160" y="332" width="880" height="170" rx="10" class="feature"/>
-  <text x="176" y="349" class="tag" fill="#2563eb">FEATURE · ONE USER GOAL: CONNECT AND TALK · TWO SCREENS</text>
-  <text x="176" y="370" class="title">:feature:terminal</text>
-
-  <text x="176" y="396" class="layerKey">presentation/devices</text>
-  <text x="340" y="396" class="sub">DevicesRoute · DevicesViewModel</text>
-  <text x="176" y="416" class="layerKey">presentation/terminal</text>
-  <text x="340" y="416" class="sub">TerminalRoute · TerminalViewModel</text>
-  <text x="176" y="440" class="layerKey">domain</text>
-  <text x="340" y="440" class="sub">Device · ScanDevices · ConnectToDevice · SendMessage · ObserveTerminal</text>
-  <text x="176" y="460" class="layerKey">data</text>
-  <text x="340" y="460" class="sub">DeviceRepositoryImpl · TerminalRepositoryImpl</text>
-  <text x="176" y="480" class="layerKey">di</text>
-  <text x="340" y="480" class="sub">terminalModule</text>
-  <text x="1024" y="490" class="muted" text-anchor="end">later: own modules for macros, history, settings</text>
-
-  <!-- feature → bluetooth -->
-  <path d="M460,502 V580" class="dep"/>
-  <text x="468" y="545" class="lbl">BluetoothSession · SerialPort</text>
-
-  <!-- feature → systemdesign -->
-  <path d="M1000,502 V580" class="ui"/>
-
-  <!-- Row 4: :bluetooth library -->
-  <rect x="80" y="580" width="760" height="232" rx="12" class="lib"/>
-  <text x="98" y="598" class="tag" fill="#7c3aed">REUSABLE KMP LIBRARY · NO UI · NO DI · NO APP TYPES · COROUTINES ONLY</text>
-  <text x="98" y="618" class="title">:bluetooth</text>
-  <text x="190" y="618" class="sub">package com.majidbahmani.bluetooth · createBluetoothClient()</text>
-
-  <rect x="100" y="630" width="720" height="70" rx="8" class="src"/>
-  <text x="116" y="648" class="tag" fill="#7c3aed">commonMain</text>
-  <text x="116" y="668" class="sub">BluetoothClient (scan, connect) · BleConnection (write, observe) · BluetoothSession</text>
-  <text x="116" y="687" class="sub">SerialPort + SerialProfiles (NUS · HM-10 · FFF0) · models · FakeBluetoothClient</text>
-
-  <rect x="100" y="722" width="350" height="78" rx="8" class="src"/>
-  <text x="116" y="740" class="tag" fill="#7c3aed">androidMain</text>
-  <text x="116" y="760" class="title">AndroidBleClient</text>
-  <text x="116" y="779" class="sub">LeScanner · BluetoothGatt</text>
-  <rect x="300" y="732" width="138" height="56" rx="6" class="later"/>
-  <text x="369" y="755" class="muted" text-anchor="middle">ClassicTransport</text>
-  <text x="369" y="772" class="muted" text-anchor="middle">(later, Android only)</text>
-
-  <rect x="470" y="722" width="350" height="78" rx="8" class="src"/>
-  <text x="486" y="740" class="tag" fill="#7c3aed">iosMain</text>
-  <text x="486" y="760" class="title">IosBleClient</text>
-  <text x="486" y="779" class="sub">CBCentralManager · CBPeripheral</text>
-
-  <!-- implements -->
-  <path d="M200,722 V700" class="impl"/>
-  <path d="M640,722 V700" class="impl"/>
-  <text x="208" y="715" class="lbl" fill="#7c3aed">implements</text>
-  <text x="648" y="715" class="lbl" fill="#7c3aed">implements</text>
-
-  <!-- Row 5: OS stacks -->
-  <rect x="100" y="848" width="350" height="44" rx="8" class="os"/>
-  <text x="275" y="875" class="text" text-anchor="middle">Android Bluetooth stack (android.bluetooth.le)</text>
-  <rect x="470" y="848" width="350" height="44" rx="8" class="os"/>
-  <text x="645" y="875" class="text" text-anchor="middle">iOS CoreBluetooth (platform.CoreBluetooth)</text>
-  <path d="M200,800 V848" class="osCall"/>
-  <path d="M640,800 V848" class="osCall"/>
-
-  <!-- Row 6: device -->
-  <path d="M275,892 L400,936" class="radio"/>
-  <path d="M645,892 L520,936" class="radio"/>
-  <rect x="280" y="936" width="360" height="52" rx="10" class="device"/>
-  <text x="460" y="958" class="title" text-anchor="middle">BLE peripheral</text>
-  <text x="460" y="977" class="sub" text-anchor="middle">HM-10 · Nordic UART · BLE OBD-II dongle</text>
-
-  <!-- :systemdesign -->
-  <rect x="880" y="580" width="242" height="112" rx="10" class="ds"/>
-  <text x="896" y="598" class="tag" fill="#db2777">DESIGN SYSTEM</text>
-  <text x="896" y="618" class="title">:systemdesign</text>
-  <text x="896" y="638" class="sub">Theme (light + dark)</text>
-  <text x="896" y="655" class="sub">Color.kt (internal)</text>
-  <text x="896" y="672" class="sub">components used by 2+</text>
-  <text x="896" y="686" class="sub">features</text>
-
-  <!-- Legend -->
-  <rect x="880" y="712" width="282" height="128" rx="8" class="legend"/>
-  <text x="896" y="732" class="noteTitle" fill="#374151">Legend</text>
-  <path d="M896,752 H940" class="dep"/>
-  <text x="950" y="756" class="lbl">depends on</text>
-  <path d="M896,774 H940" class="ui"/>
-  <text x="950" y="778" class="lbl">uses theme / UI components</text>
-  <path d="M896,796 H940" class="impl"/>
-  <text x="950" y="800" class="lbl">implements (expect/actual or interface)</text>
-  <path d="M896,818 H940" class="osCall"/>
-  <text x="950" y="822" class="lbl">calls platform API</text>
-
-  <!-- Rules -->
-  <rect x="880" y="856" width="282" height="132" rx="8" class="note"/>
-  <text x="896" y="876" class="noteTitle">Rules</text>
-  <text x="896" y="896" class="text">• Shells only start the app</text>
-  <text x="896" y="914" class="text">• Only :app knows every feature</text>
-  <text x="896" y="932" class="text">• Modules per feature, not per screen</text>
-  <text x="896" y="950" class="text">• :bluetooth: no app types, no DI</text>
-  <text x="896" y="968" class="text">• domain = pure Kotlin, no BLE types</text>
-  <text x="896" y="984" class="text">• iOS: BLE only (no Classic SPP)</text>
+  <rect width="1400" height="1250" fill="#ffffff"/>
+<text x="40" y="36" class="h1">BluetoothTerminal — modules and layers (KMP, BLE)</text>
+<text x="40" y="56" class="h1sub">Arrows point to what is depended on. Inside :feature:terminal: one package per screen, each with its own layers; screens share only the connection package.</text>
+<rect x="300" y="76" width="360" height="66" rx="10" class="shell"/>
+<text x="316" y="92" class="tag" fill="#374151">PLATFORM SHELL</text>
+<text x="316" y="111" class="title">androidApp</text>
+<text x="316" y="128" class="sub">MainActivity · BluetoothTerminalApp (initKoin)</text>
+<rect x="740" y="76" width="360" height="66" rx="10" class="shell"/>
+<text x="756" y="92" class="tag" fill="#374151">PLATFORM SHELL</text>
+<text x="756" y="111" class="title">iosApp</text>
+<text x="756" y="128" class="sub">iOSApp.swift · ContentView → MainViewController</text>
+<path d="M480,142 L560,178" class="dep"/><path d="M920,142 L840,178" class="dep"/>
+<rect x="300" y="178" width="800" height="92" rx="10" class="root"/>
+<text x="316" y="195" class="tag" fill="#4f46e5">COMPOSITION ROOT</text>
+<text x="316" y="215" class="title">:app</text>
+<text x="316" y="234" class="sub">ui   App(): theme (light/dark) · NavHost(TerminalGraph) { terminalScreens() } · slide transitions</text>
+<text x="316" y="249" class="sub">di   initKoin() · bluetoothModule: app scope (SupervisorJob + Default), BluetoothSession</text>
+<text x="316" y="264" class="sub">     platformModule (expect/actual): BluetoothClient · builds the iOS framework &quot;Shared&quot;</text>
+<path d="M700,270 V316" class="dep"/>
+<text x="708" y="296" class="lbl">terminalScreens() + terminalFeatureModule</text>
+<rect x="40" y="316" width="1320" height="508" rx="12" class="feature"/>
+<text x="56" y="334" class="tag" fill="#2563eb">FEATURE · ONE USER GOAL: CONNECT AND TALK</text>
+<text x="56" y="356" class="title">:feature:terminal</text>
+<text x="200" y="356" class="text">Devices → Terminal → Settings · everything is internal except the two public entry points at the bottom</text>
+<text x="56" y="426" class="layer" fill="#2563eb">presentation</text>
+<text x="56" y="536" class="layer" fill="#059669">domain</text>
+<text x="56" y="684" class="layer" fill="#ea580c">data</text>
+<text x="56" y="762" class="layer" fill="#6b7280">di</text>
+<rect x="170" y="370" width="288" height="32" rx="6" class="pkg"/>
+<text x="180" y="386" class="pkgTitle">connection/</text>
+<text x="276" y="386" class="lbl">shared by every screen · no UI</text>
+<rect x="170" y="408" width="288" height="104" rx="6" class="none"/>
+<text x="314.0" y="464.0" class="muted" text-anchor="middle">— none (no screen) —</text>
+<rect x="170" y="518" width="288" height="142" rx="6" class="dom"/>
+<text x="180" y="535" class="sub">model: ConnectionStatus, DeviceInfo,</text>
+<text x="180" y="550" class="sub">  Channel (DeviceService, CharacteristicRef,</text>
+<text x="180" y="565" class="sub">  ChannelSelection, IncomingData)</text>
+<text x="180" y="580" class="sub">repository: ConnectionRepository,</text>
+<text x="180" y="595" class="sub">  ChannelRepository</text>
+<text x="180" y="610" class="sub">usecase: ObserveConnection, Disconnect</text>
+<rect x="170" y="666" width="288" height="72" rx="6" class="data"/>
+<text x="180" y="683" class="sub">ConnectionRepositoryImpl</text>
+<text x="180" y="698" class="sub">  → BluetoothSession</text>
+<text x="180" y="713" class="sub">ChannelRepositoryImpl → BluetoothSession,</text>
+<text x="180" y="728" class="sub">  SerialProfiles (default pick), writeChunked</text>
+<rect x="170" y="744" width="288" height="26" rx="6" class="di"/>
+<text x="180" y="761" class="sub">connectionModule</text>
+<rect x="466" y="370" width="288" height="32" rx="6" class="pkg"/>
+<text x="476" y="386" class="pkgTitle">devices/</text>
+<text x="548" y="386" class="lbl">screen 1: scan + connect</text>
+<rect x="466" y="408" width="288" height="104" rx="6" class="pres"/>
+<text x="476" y="425" class="sub">DevicesRoute / DevicesScreen</text>
+<text x="476" y="440" class="sub">DevicesViewModel · DevicesUiState</text>
+<text x="476" y="455" class="sub">BluetoothActions (expect/actual:</text>
+<text x="476" y="470" class="sub">  permission, turn on, settings)</text>
+<rect x="466" y="518" width="288" height="142" rx="6" class="dom"/>
+<text x="476" y="535" class="sub">model: Device, BluetoothAvailability,</text>
+<text x="476" y="550" class="sub">  DeviceScan</text>
+<text x="476" y="565" class="sub">repository: DeviceRepository</text>
+<text x="476" y="580" class="sub">usecase: ScanDevices, ConnectToDevice</text>
+<rect x="466" y="666" width="288" height="72" rx="6" class="data"/>
+<text x="476" y="683" class="sub">DeviceRepositoryImpl</text>
+<text x="476" y="698" class="sub">  → BluetoothClient (scan, state)</text>
+<text x="476" y="713" class="sub">  → BluetoothSession (connect)</text>
+<rect x="466" y="744" width="288" height="26" rx="6" class="di"/>
+<text x="476" y="761" class="sub">devicesModule</text>
+<rect x="762" y="370" width="288" height="32" rx="6" class="pkg"/>
+<text x="772" y="386" class="pkgTitle">terminal/</text>
+<text x="852" y="386" class="lbl">screen 2: send + receive</text>
+<rect x="762" y="408" width="288" height="104" rx="6" class="pres"/>
+<text x="772" y="425" class="sub">TerminalRoute / TerminalScreen</text>
+<text x="772" y="440" class="sub">TerminalViewModel · TerminalUiState</text>
+<text x="772" y="455" class="sub">menu: Devices, Settings, Disconnect</text>
+<rect x="762" y="518" width="288" height="142" rx="6" class="dom"/>
+<text x="772" y="535" class="sub">model: TerminalMessage</text>
+<text x="772" y="550" class="sub">usecase: ObserveMessages, SendMessage</text>
+<text x="772" y="565" class="sub">  (on connection&#x27;s ChannelRepository)</text>
+<rect x="762" y="666" width="288" height="72" rx="6" class="none"/>
+<text x="906.0" y="706.0" class="muted" text-anchor="middle">— none: uses connection/ —</text>
+<rect x="762" y="744" width="288" height="26" rx="6" class="di"/>
+<text x="772" y="761" class="sub">terminalModule</text>
+<rect x="1058" y="370" width="288" height="32" rx="6" class="pkg"/>
+<text x="1068" y="386" class="pkgTitle">settings/</text>
+<text x="1148" y="386" class="lbl">screen 3: services + characteristics</text>
+<rect x="1058" y="408" width="288" height="104" rx="6" class="pres"/>
+<text x="1068" y="425" class="sub">SettingsRoute / SettingsScreen</text>
+<text x="1068" y="440" class="sub">SettingsViewModel · SettingsUiState</text>
+<rect x="1058" y="518" width="288" height="142" rx="6" class="dom"/>
+<text x="1068" y="535" class="sub">model: ServiceSettings,</text>
+<text x="1068" y="550" class="sub">  CharacteristicSettings</text>
+<text x="1068" y="565" class="sub">usecase: ObserveServiceSettings,</text>
+<text x="1068" y="580" class="sub">  SetSendTarget, SetListening,</text>
+<text x="1068" y="595" class="sub">  ReadCharacteristic</text>
+<text x="1068" y="610" class="sub">  (on connection&#x27;s ChannelRepository)</text>
+<rect x="1058" y="666" width="288" height="72" rx="6" class="none"/>
+<text x="1202.0" y="706.0" class="muted" text-anchor="middle">— none: uses connection/ —</text>
+<rect x="1058" y="744" width="288" height="26" rx="6" class="di"/>
+<text x="1068" y="761" class="sub">settingsModule</text>
+<path d="M466,386 H460" class="use"/>
+<rect x="170" y="778" width="584" height="30" rx="6" class="pkg"/>
+<text x="180" y="798" class="pkgTitle">navigation/</text>
+<text x="282" y="798" class="sub">TerminalGraph · terminalScreens(): Devices → Terminal → Settings</text>
+<rect x="762" y="778" width="584" height="30" rx="6" class="pkg"/>
+<text x="772" y="798" class="pkgTitle">di/</text>
+<text x="808" y="798" class="sub">terminalFeatureModule: includes the 4 package modules</text>
+<text x="56" y="798" class="layer" fill="#4f46e5">public</text>
+<path d="M314.0,824 V870" class="dep"/>
+<text x="322.0" y="854" class="lbl">data layer only: BluetoothClient, BluetoothSession, SerialProfiles, writeChunked</text>
+<path d="M300,232 H20 V930 H40" class="dep"/>
+<text x="28" y="640" class="lbl" transform="rotate(-90 28 640)">Koin: BluetoothClient, BluetoothSession</text>
+<rect x="40" y="870" width="980" height="200" rx="12" class="lib"/>
+<text x="56" y="888" class="tag" fill="#7c3aed">REUSABLE KMP LIBRARY · NO UI · NO DI · NO APP TYPES · COROUTINES ONLY</text>
+<text x="56" y="908" class="title">:bluetooth</text>
+<text x="150" y="908" class="sub">package com.majidbahmani.bluetooth · explicitApi()</text>
+<text x="56" y="928" class="tag" fill="#7c3aed">commonMain</text>
+<rect x="56.0" y="934" width="231.0" height="86" rx="6" class="src"/>
+<text x="64.0" y="950" class="pkgTitle">API</text>
+<text x="64.0" y="966.0" class="sub">BluetoothClient (adapter: state,</text>
+<text x="64.0" y="978.5" class="sub">  scan, connect)</text>
+<text x="64.0" y="991.0" class="sub">BleConnection (one link: read,</text>
+<text x="64.0" y="1003.5" class="sub">  write, observe, disconnect)</text>
+<text x="64.0" y="1016.0" class="sub">BluetoothSession (current link)</text>
+<rect x="295.0" y="934" width="231.0" height="86" rx="6" class="src"/>
+<text x="303.0" y="950" class="pkgTitle">model/</text>
+<text x="303.0" y="966.0" class="sub">BleDevice · Gatt · ScanFilter</text>
+<text x="303.0" y="978.5" class="sub">AdapterState · ConnectionState</text>
+<text x="303.0" y="991.0" class="sub">SessionState (Idle, Connecting,</text>
+<text x="303.0" y="1003.5" class="sub">  Connected, Failed, Lost)</text>
+<text x="303.0" y="1016.0" class="sub">BluetoothException (sealed)</text>
+<rect x="534.0" y="934" width="231.0" height="86" rx="6" class="src"/>
+<text x="542.0" y="950" class="pkgTitle">serial/</text>
+<text x="542.0" y="966.0" class="sub">SerialProfiles: NUS, HM-10,</text>
+<text x="542.0" y="978.5" class="sub">  FFF0, Microchip + detect()</text>
+<text x="542.0" y="991.0" class="sub">writeChunked(): split by</text>
+<text x="542.0" y="1003.5" class="sub">  maxWriteLength</text>
+<rect x="773.0" y="934" width="231.0" height="86" rx="6" class="src"/>
+<text x="781.0" y="950" class="pkgTitle">testing/</text>
+<text x="781.0" y="966.0" class="sub">FakeBluetoothClient</text>
+<text x="781.0" y="978.5" class="sub">FakeBleConnection</text>
+<text x="781.0" y="991.0" class="sub">(commonMain: usable by other</text>
+<text x="781.0" y="1003.5" class="sub">  modules&#x27; tests)</text>
+<rect x="56" y="1028" width="470.0" height="34" rx="6" class="src"/>
+<text x="64" y="1049" class="tag" fill="#7c3aed">androidMain</text>
+<text x="150" y="1049" class="sub">AndroidBleClient · AndroidBleConnection · GattQueue</text>
+<rect x="534.0" y="1028" width="470.0" height="34" rx="6" class="later"/>
+<text x="542.0" y="1049" class="tag" fill="#7c3aed">iosMain</text>
+<text x="602.0" y="1049" class="sub">placeholder (Unsupported) · CoreBluetooth planned</text>
+<rect x="1060" y="870" width="300" height="70" rx="10" class="ds"/>
+<text x="1076" y="888" class="tag" fill="#db2777">DESIGN SYSTEM · PLANNED</text>
+<text x="1076" y="908" class="title">:systemdesign</text>
+<text x="1076" y="928" class="sub">empty: theme (doc 36) comes later</text>
+<path d="M1300,816 V870" class="dep" stroke-dasharray="4 3"/>
+<rect x="56" y="1100" width="474" height="38" rx="8" class="os"/>
+<text x="293" y="1124" class="text" text-anchor="middle">Android Bluetooth stack (android.bluetooth.le)</text>
+<rect x="546" y="1100" width="474" height="38" rx="8" class="os"/>
+<text x="783" y="1124" class="text" text-anchor="middle">iOS CoreBluetooth (platform.CoreBluetooth) · not used yet</text>
+<path d="M290,1070 V1100" class="osCall"/>
+<rect x="330" y="1180" width="420" height="50" rx="10" class="device"/>
+<text x="540" y="1202" class="title" text-anchor="middle">BLE peripheral</text>
+<text x="540" y="1220" class="sub" text-anchor="middle">HM-10 · Nordic UART · ESP32 · BLE OBD-II dongle</text>
+<path d="M293,1138 L420,1180" class="radio"/>
+<rect x="1060" y="960" width="300" height="112" rx="8" class="legend"/>
+<text x="1074" y="978" class="noteTitle" fill="#374151">Layers</text>
+<rect x="1074" y="988" width="14" height="12" rx="2" class="pres"/>
+<text x="1094" y="998" class="lbl" font-weight="700">presentation</text>
+<text x="1170" y="998" class="lbl">Route, Screen, ViewModel, UiState</text>
+<rect x="1074" y="1008" width="14" height="12" rx="2" class="dom"/>
+<text x="1094" y="1018" class="lbl" font-weight="700">domain</text>
+<text x="1170" y="1018" class="lbl">models, repository interfaces, use cases</text>
+<rect x="1074" y="1028" width="14" height="12" rx="2" class="data"/>
+<text x="1094" y="1038" class="lbl" font-weight="700">data</text>
+<text x="1170" y="1038" class="lbl">repository impls (only :bluetooth users)</text>
+<rect x="1074" y="1048" width="14" height="12" rx="2" class="di"/>
+<text x="1094" y="1058" class="lbl" font-weight="700">di</text>
+<text x="1170" y="1058" class="lbl">internal Koin module per package</text>
+<rect x="1060" y="1086" width="300" height="150" rx="8" class="note"/>
+<text x="1074" y="1104" class="noteTitle">Rules</text>
+<text x="1074" y="1122" class="text">• Shells only start the app</text>
+<text x="1074" y="1137" class="text">• :app is the only module that knows all</text>
+<text x="1074" y="1152" class="text">• One feature module per user goal,</text>
+<text x="1074" y="1167" class="text">   one package per screen</text>
+<text x="1074" y="1182" class="text">• Screen packages never import each other;</text>
+<text x="1074" y="1197" class="text">   they share only connection/</text>
+<text x="1074" y="1212" class="text">• domain is pure Kotlin: no :bluetooth types</text>
+<text x="1074" y="1227" class="text">• :bluetooth has no app types and no DI</text>
 </svg>

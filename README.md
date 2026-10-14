@@ -4,47 +4,89 @@ A Bluetooth terminal for Android and iOS (Kotlin Multiplatform + Compose Multipl
 devices, connect, and send and receive data. BLE first on both platforms; Bluetooth Classic (SPP)
 is planned for Android only, because iOS has no public API for it.
 
+## Features
+
+| | Android | iOS |
+|---|---|---|
+| Bluetooth availability, permission request, "turn on Bluetooth" | ✅ | placeholder |
+| Scan for BLE devices, stop / scan again | ✅ | placeholder |
+| Connect, connection status (connecting, failed, lost), disconnect | ✅ | placeholder |
+| Terminal: send text, see sent and received messages | ✅ | placeholder |
+| Serial profile detection (Nordic UART, HM-10, FFF0, Microchip) | ✅ | placeholder |
+| Settings: services and characteristics, choose where to send and what to listen to, read a value | ✅ | placeholder |
+
+iOS builds and shows "Bluetooth not supported" until the CoreBluetooth implementation of the library lands.
+
 ## Architecture
 
-![Multi-module architecture](art/module-architecture.svg)
+![Modules and layers](art/module-architecture.svg)
 
-- **`androidApp` / `iosApp`**: platform shells; they only start the app.
-- **`:app`**: composition root with navigation, Koin setup and the iOS framework.
-- **`:feature:terminal`**: one feature module for one user goal (connect and talk) with two screens,
-  Devices (scan, connect) and Terminal (send, receive), and its own data / domain / presentation
-  layers. Modules are cut per feature, not per screen; independent features (e.g. macros, history)
-  will get their own modules.
-- **`:bluetooth`**: reusable KMP BLE library (Android `BluetoothGatt`, iOS CoreBluetooth) with no UI,
-  no DI and no app types, so it can be used in other projects.
-- **`:systemdesign`**: light and dark theme.
+### Modules
 
----
+| Module | Role | Depends on |
+|---|---|---|
+| `androidApp` / `iosApp` | Platform shells: `MainActivity` + `Application` (starts Koin) / SwiftUI entry point | `:app` |
+| `:app` | Composition root: `App()` (theme, `NavHost`), Koin setup (`initKoin`, app scope, `BluetoothSession`, platform `BluetoothClient`), iOS framework | everything |
+| `:feature:terminal` | One feature for one user goal (connect and talk): Devices, Terminal and Settings screens | `:bluetooth`, `:systemdesign` |
+| `:bluetooth` | Reusable KMP BLE library: no UI, no DI, no app types; only coroutines | — |
+| `:systemdesign` | Shared theme (planned, empty for now) | — |
 
-This is a Kotlin Multiplatform project targeting Android, iOS.
+Modules are cut per **feature**, not per screen. Independent features (e.g. macros, history) will get
+their own modules.
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+### Layers inside `:feature:terminal`
 
-* [/app](./app/src) is the composition root shared by the Android and iOS apps.
-  It contains several subfolders:
-  - [commonMain](./app/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./app/src/iosMain/kotlin) folder would be the right place for such calls.
+One package per screen, each with its own Clean Architecture layers, plus a shared `connection/`
+package. Screen packages never import each other.
 
-### Running the apps
+| Package | presentation | domain | data |
+|---|---|---|---|
+| `connection/` (shared) | — | `ConnectionStatus`, channel models, `ConnectionRepository`, `ChannelRepository`, `ObserveConnection`, `Disconnect` | `ConnectionRepositoryImpl`, `ChannelRepositoryImpl` |
+| `devices/` | `DevicesScreen`, `DevicesViewModel`, `BluetoothActions` (expect/actual) | `Device`, `DeviceScan`, `DeviceRepository`, `ScanDevices`, `ConnectToDevice` | `DeviceRepositoryImpl` |
+| `terminal/` | `TerminalScreen`, `TerminalViewModel` | `TerminalMessage`, `ObserveMessages`, `SendMessage` | — (uses `ChannelRepository`) |
+| `settings/` | `SettingsScreen`, `SettingsViewModel` | `ServiceSettings`, `ObserveServiceSettings`, `SetSendTarget`, `SetListening`, `ReadCharacteristic` | — (uses `ChannelRepository`) |
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+- **presentation** depends on **domain** (use cases) only; **domain** is pure Kotlin with no `:bluetooth`
+  types; only **data** uses the library.
+- Each package has its own `internal` Koin module (`di/`). The feature exposes two public entry points:
+  `terminalScreens()` (`navigation/`) and `terminalFeatureModule` (`di/`), which includes the package modules.
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+### Inside `:bluetooth`
 
-### Running tests
+| Source set | Contents |
+|---|---|
+| `commonMain` | `BluetoothClient` (adapter: state, scan, connect), `BleConnection` (one link: read, write, observe), `BluetoothSession` (holds the current link: Idle, Connecting, Connected, Failed, Lost), `model/`, `serial/` (`SerialProfiles`, `writeChunked`), `testing/` (fakes for other modules' tests) |
+| `androidMain` | `AndroidBleClient`, `AndroidBleConnection` (`BluetoothGatt`), `GattQueue` (one GATT operation at a time) |
+| `iosMain` | Placeholder client reporting `Unsupported`; CoreBluetooth implementation planned |
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+## Project structure
 
-- Android tests: `./gradlew :app:testAndroidHostTest`
-- iOS tests: `./gradlew :app:iosSimulatorArm64Test`
+```
+androidApp/          Android shell (MainActivity, Application)
+iosApp/              iOS shell (Xcode project, SwiftUI)
+app/                 composition root (App.kt, di/)
+feature/terminal/    connection/, devices/, terminal/, settings/, navigation/, di/
+bluetooth/           BLE library (commonMain, androidMain, iosMain)
+systemdesign/        theme (planned)
+art/                 README images
+```
+
+## Running the apps
+
+- Android: `./gradlew :androidApp:installDebug` (a real phone: the emulator has no BLE devices nearby)
+- iOS: open [/iosApp](./iosApp) in Xcode and run it
+
+Minimum Android version: 12 (API 31), so only `BLUETOOTH_SCAN` / `BLUETOOTH_CONNECT` are needed (no location).
+
+## Running tests
+
+```bash
+./gradlew :bluetooth:testAndroidHostTest :feature:terminal:testAndroidHostTest :app:testAndroidHostTest
+./gradlew :bluetooth:iosSimulatorArm64Test :feature:terminal:iosSimulatorArm64Test :app:iosSimulatorArm64Test
+```
+
+Tests use fakes, no hardware: `FakeBluetoothClient` / `FakeBleConnection` from `:bluetooth`, fake
+repositories in the feature.
 
 ---
 
