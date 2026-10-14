@@ -36,6 +36,20 @@
     <string name="terminal_error_not_supported">This characteristic can\'t be written.</string>
     <string name="terminal_error_failed">Couldn\'t send. Try again.</string>
 
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_not_connected">Not connected. Connect to a device to see its services.</string>
+    <string name="settings_unknown_service">Unknown service</string>
+    <string name="settings_property_read">Read</string>
+    <string name="settings_property_write">Write</string>
+    <string name="settings_property_notify">Notify</string>
+    <string name="settings_send_here">Send here</string>
+    <string name="settings_listen">Listen</string>
+    <string name="settings_read">Read</string>
+    <string name="settings_reading">Reading…</string>
+    <string name="settings_read_empty">(empty)</string>
+    <string name="settings_read_failed">Couldn\'t read the value.</string>
+
     <!-- Connection banner -->
     <string name="connection_connecting">Connecting to %1$s…</string>
     <string name="connection_failed_timeout">%1$s didn\'t respond.</string>
