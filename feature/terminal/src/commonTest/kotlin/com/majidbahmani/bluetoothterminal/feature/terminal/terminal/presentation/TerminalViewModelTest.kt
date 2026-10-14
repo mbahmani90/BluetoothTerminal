@@ -197,6 +197,19 @@ class TerminalViewModelTest {
     }
 
     @Test
+    fun onMenuItemClick_closesMenuAndKeepsActionUntilHandled() = runTest(dispatcher) {
+        val viewModel = create()
+        viewModel.onMenuOpen()
+
+        viewModel.onMenuItemClick(MenuAction.Settings)
+        assertFalse(viewModel.uiState.value.isMenuOpen)
+        assertEquals(MenuAction.Settings, viewModel.uiState.value.pendingMenuAction)
+
+        viewModel.onMenuActionHandled()
+        assertNull(viewModel.uiState.value.pendingMenuAction)
+    }
+
+    @Test
     fun onDisconnect_disconnects() = runTest(dispatcher) {
         val viewModel = create()
 

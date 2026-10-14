@@ -26,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -70,6 +72,17 @@ internal fun TerminalRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentOnClose by rememberUpdatedState(onClose)
     LaunchedEffect(viewModel) { viewModel.closed.collect { currentOnClose() } }
+    // Navigate one frame after the menu left the screen: navigating in the same frame let the menu's popup
+    // window stay on top of the next screen while it slid in.
+    LaunchedEffect(uiState.pendingMenuAction) {
+        val action = uiState.pendingMenuAction ?: return@LaunchedEffect
+        withFrameNanos {}
+        viewModel.onMenuActionHandled()
+        when (action) {
+            MenuAction.Devices -> onOpenDevices()
+            MenuAction.Settings -> onOpenSettings()
+        }
+    }
 
     TerminalScreen(
         uiState = uiState,
@@ -78,8 +91,7 @@ internal fun TerminalRoute(
         onDisconnect = viewModel::onDisconnect,
         onMenuOpen = viewModel::onMenuOpen,
         onMenuDismiss = viewModel::onMenuDismiss,
-        onOpenDevices = onOpenDevices,
-        onOpenSettings = onOpenSettings,
+        onMenuItemClick = viewModel::onMenuItemClick,
         modifier = modifier,
     )
 }
@@ -92,8 +104,7 @@ internal fun TerminalScreen(
     onDisconnect: () -> Unit,
     onMenuOpen: () -> Unit,
     onMenuDismiss: () -> Unit,
-    onOpenDevices: () -> Unit,
-    onOpenSettings: () -> Unit,
+    onMenuItemClick: (MenuAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     // The keyboard is handled once, by App's safeDrawingPadding (it includes the IME insets).
@@ -114,8 +125,7 @@ internal fun TerminalScreen(
                 expanded = uiState.isMenuOpen,
                 onOpen = onMenuOpen,
                 onDismiss = onMenuDismiss,
-                onOpenDevices = onOpenDevices,
-                onOpenSettings = onOpenSettings,
+                onItemClick = onMenuItemClick,
             )
         }
         val lost = uiState.connection as? ConnectionStatus.Lost
@@ -154,28 +164,23 @@ private fun MoreMenu(
     expanded: Boolean,
     onOpen: () -> Unit,
     onDismiss: () -> Unit,
-    onOpenDevices: () -> Unit,
-    onOpenSettings: () -> Unit,
+    onItemClick: (MenuAction) -> Unit,
 ) {
     // Open/closed lives in TerminalUiState (doc 29), so it survives recomposition and is testable.
     Box {
         IconButton(onClick = onOpen) {
             Icon(painterResource(Res.drawable.ic_more_vert), contentDescription = stringResource(Res.string.terminal_more))
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        // Only composed while open: closing removes the popup at once. With expanded = false it would fade out
+        // in its own window, on top of the next screen sliding in (Settings appeared before the menu left).
+        if (expanded) DropdownMenu(expanded = true, onDismissRequest = onDismiss) {
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.terminal_menu_devices)) },
-                onClick = {
-                    onDismiss()
-                    onOpenDevices()
-                },
+                onClick = { onItemClick(MenuAction.Devices) },
             )
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.terminal_menu_settings)) },
-                onClick = {
-                    onDismiss()
-                    onOpenSettings()
-                },
+                onClick = { onItemClick(MenuAction.Settings) },
             )
         }
     }
@@ -190,8 +195,16 @@ private fun MessageLog(messages: List<TerminalMessage>, modifier: Modifier) {
         return
     }
     val listState = rememberLazyListState()
-    // Follow new messages.
-    LaunchedEffect(messages.size) { listState.animateScrollToItem(messages.lastIndex) }
+    val currentMessages by rememberUpdatedState(messages)
+    // Follow new messages. When the log appears (first open, or coming back from Settings while the screen slides
+    // in) jump to the newest at once; animating that scroll too made two movements at the same time.
+    LaunchedEffect(listState) {
+        var first = true
+        snapshotFlow { currentMessages.size }.collect { size ->
+            if (first) listState.scrollToItem(size - 1) else listState.animateScrollToItem(size - 1)
+            first = false
+        }
+    }
     LazyColumn(state = listState, modifier = modifier.fillMaxWidth()) {
         items(messages) { message -> MessageItem(message) }
     }
@@ -279,8 +292,7 @@ private fun TerminalScreenPreview() {
             onDisconnect = {},
             onMenuOpen = {},
             onMenuDismiss = {},
-            onOpenDevices = {},
-            onOpenSettings = {},
+            onMenuItemClick = {},
         )
     }
 }

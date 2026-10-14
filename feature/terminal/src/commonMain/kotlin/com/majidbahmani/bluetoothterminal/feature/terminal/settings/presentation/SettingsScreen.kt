@@ -15,6 +15,8 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -30,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import bluetoothterminal.feature.terminal.generated.resources.Res
+import bluetoothterminal.feature.terminal.generated.resources.ic_arrow_back
+import bluetoothterminal.feature.terminal.generated.resources.settings_back
 import bluetoothterminal.feature.terminal.generated.resources.settings_listen
 import bluetoothterminal.feature.terminal.generated.resources.settings_not_connected
 import bluetoothterminal.feature.terminal.generated.resources.settings_property_notify
@@ -46,11 +50,13 @@ import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.mod
 import com.majidbahmani.bluetoothterminal.feature.terminal.connection.domain.model.DeviceCharacteristic
 import com.majidbahmani.bluetoothterminal.feature.terminal.settings.domain.model.CharacteristicSettings
 import com.majidbahmani.bluetoothterminal.feature.terminal.settings.domain.model.ServiceSettings
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun SettingsRoute(
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
@@ -61,6 +67,7 @@ internal fun SettingsRoute(
         onSendTargetSelect = viewModel::onSendTargetSelect,
         onListeningChange = viewModel::onListeningChange,
         onRead = viewModel::onRead,
+        onBack = onBack,
         modifier = modifier,
     )
 }
@@ -71,14 +78,23 @@ internal fun SettingsScreen(
     onSendTargetSelect: (CharacteristicRef) -> Unit,
     onListeningChange: (CharacteristicRef, Boolean) -> Unit,
     onRead: (CharacteristicRef) -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(Res.string.settings_title),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(start = 4.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(painterResource(Res.drawable.ic_arrow_back), contentDescription = stringResource(Res.string.settings_back))
+            }
+            Text(
+                text = stringResource(Res.string.settings_title),
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(start = 4.dp),
+            )
+        }
         if (uiState.services.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
                 Text(
@@ -270,6 +286,7 @@ private fun SettingsScreenPreview() {
             onSendTargetSelect = {},
             onListeningChange = { _, _ -> },
             onRead = {},
+            onBack = {},
         )
     }
 }
