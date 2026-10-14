@@ -21,7 +21,13 @@ public interface BleConnection {
     /** Services discovered while connecting. */
     public val services: List<GattService>
 
-    /** Max bytes in one write: negotiated MTU - 3 on Android, `maximumWriteValueLength` on iOS. */
+    /**
+     * ATT MTU agreed with the device while connecting: 23 (the BLE default) until both sides accept a larger
+     * one, at most 517. The device's own limit decides, so this is effectively what the device supports.
+     */
+    public val mtu: Int
+
+    /** Max bytes in one write: [mtu] - 3 on Android, `maximumWriteValueLength` on iOS. */
     public val maxWriteLength: Int
 
     public suspend fun read(characteristic: CharacteristicId): Result<ByteArray>

@@ -67,8 +67,10 @@ internal class AndroidBleConnection(
     @Volatile override var services: List<GattService> = emptyList()
         private set
 
-    @Volatile override var maxWriteLength: Int = DEFAULT_MTU - ATT_HEADER_SIZE
+    @Volatile override var mtu: Int = DEFAULT_MTU
         private set
+
+    override val maxWriteLength: Int get() = mtu - ATT_HEADER_SIZE
 
     override val state: StateFlow<ConnectionState> = mutableState.asStateFlow()
 
@@ -216,7 +218,7 @@ internal class AndroidBleConnection(
 
         override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                maxWriteLength = mtu - ATT_HEADER_SIZE
+                this@AndroidBleConnection.mtu = mtu
                 queue.complete("mtu", mtu)
             } else {
                 queue.fail("mtu", BluetoothException.OperationFailed("mtu", status))
