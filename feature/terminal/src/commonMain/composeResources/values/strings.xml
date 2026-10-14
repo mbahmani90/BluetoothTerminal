@@ -38,6 +38,7 @@
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
     <string name="settings_not_connected">Not connected. Connect to a device to see its services.</string>
     <string name="settings_unknown_service">Unknown service</string>
     <string name="settings_property_read">Read</string>
