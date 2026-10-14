@@ -10,7 +10,7 @@ is planned for Android only, because iOS has no public API for it.
 |---|---|---|
 | <img src="art/screenshots/devices.png" width="250" alt="Devices screen: nearby BLE devices with signal strength"> | <img src="art/screenshots/terminal.png" width="250" alt="Terminal screen: messages sent to and received from an ESP32 over Nordic UART"> | <img src="art/screenshots/settings.png" width="250" alt="Settings screen: services and characteristics, with the send target and listening choices"> |
 
-Android, connected to an ESP32 running the Nordic UART Service. Other people's nearby devices are blurred.
+Android, connected to an ESP32 running the Nordic UART Service. MAC addresses and other nearby devices are blurred.
 
 ## Features
 
