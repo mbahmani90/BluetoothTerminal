@@ -68,7 +68,8 @@ app/                 composition root (App.kt, di/)
 feature/terminal/    connection/, devices/, terminal/, settings/, navigation/, di/
 bluetooth/           BLE library (commonMain, androidMain, iosMain)
 systemdesign/        theme (planned)
-art/                 README images
+art/                 README images, app icon and store graphics
+store/               Google Play listing texts and privacy policy
 ```
 
 ## Running the apps
