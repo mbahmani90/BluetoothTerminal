@@ -4,6 +4,14 @@ A Bluetooth terminal for Android and iOS (Kotlin Multiplatform + Compose Multipl
 devices, connect, and send and receive data. BLE first on both platforms; Bluetooth Classic (SPP)
 is planned for Android only, because iOS has no public API for it.
 
+## Screenshots
+
+| Devices | Terminal | Settings |
+|---|---|---|
+| <img src="art/screenshots/devices.png" width="250" alt="Devices screen: nearby BLE devices with signal strength"> | <img src="art/screenshots/terminal.png" width="250" alt="Terminal screen: messages sent to and received from an ESP32 over Nordic UART"> | <img src="art/screenshots/settings.png" width="250" alt="Settings screen: services and characteristics, with the send target and listening choices"> |
+
+Android, connected to an ESP32 running the Nordic UART Service. MAC addresses and other nearby devices are blurred.
+
 ## Features
 
 | | Android | iOS |
@@ -68,7 +76,7 @@ app/                 composition root (App.kt, di/)
 feature/terminal/    connection/, devices/, terminal/, settings/, navigation/, di/
 bluetooth/           BLE library (commonMain, androidMain, iosMain)
 systemdesign/        theme (planned)
-art/                 README images, app icon and store graphics
+art/                 README images and screenshots, app icon and store graphics
 store/               Google Play listing texts and privacy policy
 ```
 
