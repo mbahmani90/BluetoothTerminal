@@ -13,6 +13,8 @@ internal data class TerminalUiState(
     val isSending: Boolean = false,
     /** Why the last send failed; cleared when the input changes or the next send starts. */
     val sendError: ChannelError? = null,
+    /** The ⋮ menu is open. */
+    val isMenuOpen: Boolean = false,
 ) {
     val isConnected: Boolean get() = connection is ConnectionStatus.Connected
 
