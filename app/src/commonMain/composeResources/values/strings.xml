@@ -1,0 +1,8 @@
+<resources>
+    <!-- CyLinko suggestion, shown when the app opens -->
+    <string name="cylinko_title">Need more BLE features?</string>
+    <string name="cylinko_message">CyLinko is our professional BLE app, with more tools for working with Bluetooth Low Energy devices. Get it free on Google Play.</string>
+    <string name="cylinko_get">Get CyLinko</string>
+    <string name="cylinko_not_now">Not now</string>
+    <string name="cylinko_dont_ask_again">Don't ask again</string>
+</resources>

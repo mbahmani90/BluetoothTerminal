@@ -12,7 +12,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-/** Provides the platform's `BluetoothClient` (Android needs a `Context`, iOS doesn't). */
+/** Provides the platform's `BluetoothClient` (Android needs a `Context`, iOS doesn't) and `CyLinkoPromptStore`. */
 internal expect val platformModule: Module
 
 internal const val APP_SCOPE = "appScope"
