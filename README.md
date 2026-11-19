@@ -102,10 +102,23 @@ repositories in the feature.
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
 ### Releasing the Android app
 
-1. Create an upload key once (keep the file and passwords safe, outside git; an absolute
-   `storeFile` path lets the keystore live outside the repo):
-   `keytool -genkeypair -v -keystore keystore/upload-keystore.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000`
-2. Copy `keystore.properties.example` to `keystore.properties` and fill in the passwords.
-   On CI, set `ANDROID_KEYSTORE_FILE`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and `ANDROID_KEY_PASSWORD` instead.
-3. Build the bundle for Google Play: `./gradlew :androidApp:bundleRelease`
-   (output: `androidApp/build/outputs/bundle/release/androidApp-release.aab`).
+Releases run on GitHub Actions: test on Google Play's internal track first, then promote that same
+build to production.
+
+1. Update `distribution/whatsnew/whatsnew-en-US` (Play release notes, ≤ 500 characters).
+2. Tag and push: `git tag v1.2.0 && git push origin v1.2.0`. `release.yml` builds the signed
+   APK and AAB (version 1.2.0, code 10200), creates the GitHub Release and uploads the AAB to
+   **internal testing**.
+3. Install it from the Play Store as an internal tester and test it.
+4. **Actions → Promote to production → Run workflow**, version `1.2.0`. `promote.yml` moves that
+   tested build to **production** (no rebuild); Google reviews it, then it goes live.
+
+A fix after testing is a new tag (`v1.2.1`); Play never accepts the same version code twice.
+
+Secrets (Settings → Secrets and variables → Actions): `ANDROID_KEYSTORE_BASE64`,
+`ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD`, `PLAY_SERVICE_ACCOUNT_JSON`. Variables:
+`PLAY_UPLOAD_ENABLED=true`, `PLAY_RELEASE_STATUS=completed`, optional `ANDROID_KEY_ALIAS`
+(default `upload`).
+
+Local release build: copy `keystore.properties.example` to `keystore.properties`, fill in the
+upload key, then `./gradlew :androidApp:bundleRelease`.

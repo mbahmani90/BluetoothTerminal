@@ -1,0 +1,102 @@
+name: Promote to production
+
+# Moves a release that release.yml uploaded to Google Play's internal testing track, and that was
+# tested there, to production: the same build and version code, no rebuild. Google reviews it,
+# then it goes live. "Check only" validates everything without changing the Play Console.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to promote, as tagged without the v (e.g. 1.2.0)"
+        required: true
+      check_only:
+        description: "Check only: find the release and validate, but don't promote"
+        type: boolean
+        default: false
+
+concurrency:
+  group: promote
+  cancel-in-progress: false # never stop a promotion half-way
+
+permissions: {}
+
+jobs:
+  promote:
+    name: Promote internal → production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # 1.2.3 → 10203, the scheme release.yml uses.
+      - name: Version code
+        id: version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          VERSION="${VERSION#v}"
+          [[ "$VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]] || { echo "::error::Version must look like 1.2.3"; exit 1; }
+          CODE=$(( BASH_REMATCH[1] * 10000 + BASH_REMATCH[2] * 100 + BASH_REMATCH[3] ))
+          echo "Version $VERSION / $CODE"
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Install Google auth
+        run: pip install --quiet google-auth==2.40.3 requests==2.32.4
+
+      # One Play Developer API edit: read internal, write the same release to production, commit.
+      - name: Promote
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PACKAGE: com.majidbahmani.bluetoothterminal
+          CODE: ${{ steps.version.outputs.code }}
+          CHECK_ONLY: ${{ inputs.check_only }}
+        shell: python
+        run: |
+          import json, os, sys
+          from google.auth.transport.requests import AuthorizedSession
+          from google.oauth2 import service_account
+
+          def fail(message):
+              print(f"::error::{message}")  # workflow commands are read from stdout
+              sys.exit(1)
+
+          if not os.environ["SERVICE_ACCOUNT_JSON"]:
+              fail("Secret PLAY_SERVICE_ACCOUNT_JSON is missing")
+          creds = service_account.Credentials.from_service_account_info(
+              json.loads(os.environ["SERVICE_ACCOUNT_JSON"]),
+              scopes=["https://www.googleapis.com/auth/androidpublisher"],
+          )
+          api = AuthorizedSession(creds)
+          edits = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{os.environ['PACKAGE']}/edits"
+          code = os.environ["CODE"]
+          check_only = os.environ["CHECK_ONLY"] == "true"
+
+          def call(method, url, **kwargs):
+              response = api.request(method, url, **kwargs)
+              if not response.ok:
+                  fail(f"{method} {url.split('/edits')[-1] or '/edits'} failed ({response.status_code}): {response.text}")
+              return response.json() if response.content else {}
+
+          edit = call("POST", edits)["id"]
+          internal = call("GET", f"{edits}/{edit}/tracks/internal")
+          release = next((r for r in internal.get("releases", []) if code in r.get("versionCodes", [])), None)
+          if release is None:
+              call("DELETE", f"{edits}/{edit}")
+              fail(f"Version code {code} isn't on internal testing. Push its tag first (release.yml).")
+          print(f"Found on internal: {release.get('name')} (code {code}, {release.get('status')})")
+
+          call("PUT", f"{edits}/{edit}/tracks/production", json={
+              "track": "production",
+              "releases": [{
+                  "name": release.get("name"),
+                  "versionCodes": [code],
+                  "status": "completed",
+                  "releaseNotes": release.get("releaseNotes", []),
+              }],
+          })
+
+          if check_only:
+              call("POST", f"{edits}/{edit}:validate")
+              call("DELETE", f"{edits}/{edit}")
+              print("Check passed: nothing was changed.")
+          else:
+              call("POST", f"{edits}/{edit}:commit")
+              print(f"Promoted code {code} to production. Google reviews it, then it goes live.")

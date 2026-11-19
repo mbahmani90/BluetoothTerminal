@@ -1,8 +1,9 @@
 name: Release
 
 # Push a version tag → signed APK + AAB → GitHub Release (APK + checksums) and, once enabled,
-# Google Play production (AAB). "Run workflow" (manual) is a dry run: it builds and
-# verifies with the real secrets but publishes nothing.
+# Google Play's internal testing track (AAB). After testing, promote.yml moves that same build to
+# production. "Run workflow" (manual) is a dry run: it builds and verifies with the real secrets
+# but publishes nothing.
 on:
   push:
     tags: ["v*.*.*"]
@@ -139,11 +140,11 @@ jobs:
         run: gh release create "$GITHUB_REF_NAME" dist/* --title "Bluetooth Terminal $VERSION" --generate-notes --verify-tag
 
   play:
-    name: Upload to Google Play
+    name: Upload to Google Play (internal)
     needs: build
     # Off until the service account is set up (agent_skills/38): PLAY_SERVICE_ACCOUNT_JSON secret,
-    # then the repository variable PLAY_UPLOAD_ENABLED=true. Goes straight to production (Google
-    # still reviews it).
+    # then the repository variable PLAY_UPLOAD_ENABLED=true. Production comes later, from
+    # promote.yml, with this same build.
     if: ${{ github.event_name == 'push' && vars.PLAY_UPLOAD_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -160,7 +161,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.majidbahmani.bluetoothterminal
           releaseFiles: bundle/*.aab
-          tracks: production
+          tracks: internal
           # "draft" while the app has never been published (the API refuses anything else then);
           # set the variable PLAY_RELEASE_STATUS=completed once a release is live.
           status: ${{ vars.PLAY_RELEASE_STATUS || 'draft' }}
